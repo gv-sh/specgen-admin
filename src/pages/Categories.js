@@ -4,7 +4,11 @@ import config from '../config';
 
 function Categories() {
   const [categories, setCategories] = useState([]);
-  const [newCategory, setNewCategory] = useState({ name: '', description: '' });
+  const [newCategory, setNewCategory] = useState({ 
+    name: '', 
+    description: '', 
+    visibility: 'Show' 
+  });
   const [editingCategory, setEditingCategory] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [alert, setAlert] = useState({ show: false, type: '', message: '' });
@@ -119,6 +123,20 @@ function Categories() {
                   />
                   <div id="categoryDescriptionHelp" className="form-text text-muted">Provide additional details about this category.</div>
                 </div>
+                <div className="mb-3">
+                  <label htmlFor="categoryVisibility" className="form-label">Visibility</label>
+                  <select
+                    className="form-select"
+                    id="categoryVisibility"
+                    value={newCategory.visibility}
+                    onChange={(e) => setNewCategory({ ...newCategory, visibility: e.target.value })}
+                    aria-describedby="categoryVisibilityHelp"
+                  >
+                    <option value="Show">Show</option>
+                    <option value="Hide">Hide</option>
+                  </select>
+                  <div id="categoryVisibilityHelp" className="form-text text-muted">Whether to show or hide this category in the user interface.</div>
+                </div>
                 <button type="submit" className="btn btn-primary">
                   Add Category
                 </button>
@@ -137,13 +155,14 @@ function Categories() {
                     <tr>
                       <th scope="col">Name</th>
                       <th scope="col">Description</th>
+                      <th scope="col">Visibility</th>
                       <th scope="col" className="text-end">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {categories.length === 0 ? (
                       <tr>
-                        <td colSpan="3" className="text-center text-muted py-4">
+                        <td colSpan="4" className="text-center text-muted py-4">
                           No categories found. Add your first category above.
                         </td>
                       </tr>
@@ -152,6 +171,11 @@ function Categories() {
                         <tr key={category.id}>
                           <td>{category.name}</td>
                           <td>{category.description}</td>
+                          <td>
+                            <span className={`badge ${category.visibility === 'Show' ? 'bg-success' : 'bg-secondary'}`}>
+                              {category.visibility}
+                            </span>
+                          </td>
                           <td className="text-end">
                             <button
                               className="btn btn-sm btn-primary me-2"
@@ -221,6 +245,18 @@ function Categories() {
                       value={editingCategory.description}
                       onChange={(e) => setEditingCategory({ ...editingCategory, description: e.target.value })}
                     />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="editCategoryVisibility" className="form-label">Visibility</label>
+                    <select
+                      className="form-select"
+                      id="editCategoryVisibility"
+                      value={editingCategory.visibility}
+                      onChange={(e) => setEditingCategory({ ...editingCategory, visibility: e.target.value })}
+                    >
+                      <option value="Show">Show</option>
+                      <option value="Hide">Hide</option>
+                    </select>
                   </div>
                 </div>
                 <div className="modal-footer">

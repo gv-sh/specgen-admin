@@ -11,7 +11,12 @@ function Parameters() {
     type: 'Dropdown',
     categoryId: '',
     values: [],
-    visibility: 'Basic'
+    visibility: 'Basic',
+    config: {
+      min: 0,
+      max: 100,
+      step: 1
+    }
   });
   const [editingParameter, setEditingParameter] = useState(null);
   const [newValue, setNewValue] = useState('');
@@ -43,23 +48,6 @@ function Parameters() {
     fetchCategories();
     fetchParameters();
   }, [fetchCategories, fetchParameters]);
-
-  const handleAddValue = () => {
-    if (newValue.trim()) {
-      setEditingParameter(prev => ({
-        ...prev,
-        values: [...prev.values, newValue.trim()]
-      }));
-      setNewValue('');
-    }
-  };
-
-  const handleRemoveValue = (index) => {
-    setEditingParameter(prev => ({
-      ...prev,
-      values: prev.values.filter((_, i) => i !== index)
-    }));
-  };
 
   const handleAddParameter = async (e) => {
     e.preventDefault();
@@ -172,12 +160,13 @@ function Parameters() {
                     aria-describedby="parameterTypeHelp"
                   >
                     <option value="">Select a type</option>
-                    <option value="string">String</option>
-                    <option value="number">Number</option>
-                    <option value="boolean">Boolean</option>
-                    <option value="array">Array</option>
+                    <option value="Dropdown">Dropdown</option>
+                    <option value="Slider">Slider</option>
+                    <option value="Toggle Switch">Toggle Switch</option>
+                    <option value="Radio Buttons">Radio Buttons</option>
+                    <option value="Checkbox">Checkbox</option>
                   </select>
-                  <div id="parameterTypeHelp" className="form-text text-muted">Choose the data type for this parameter.</div>
+                  <div id="parameterTypeHelp" className="form-text text-muted">Choose the input type for this parameter.</div>
                 </div>
                 <div className="mb-3">
                   <label htmlFor="parameterDescription" className="form-label">Description</label>
@@ -211,19 +200,166 @@ function Parameters() {
                   <div id="parameterCategoryHelp" className="form-text text-muted">Choose the category this parameter belongs to.</div>
                 </div>
                 <div className="mb-3">
-                  <div className="form-check">
-                    <input
-                      type="checkbox"
-                      className="form-check-input"
-                      id="parameterVisibility"
-                      checked={newParameter.visibility}
-                      onChange={(e) => setNewParameter({ ...newParameter, visibility: e.target.checked })}
-                    />
-                    <label className="form-check-label" htmlFor="parameterVisibility">
-                      Visible to users
-                    </label>
-                  </div>
+                  <label htmlFor="parameterVisibility" className="form-label">Visibility</label>
+                  <select
+                    className="form-select"
+                    id="parameterVisibility"
+                    value={newParameter.visibility}
+                    onChange={(e) => setNewParameter({ ...newParameter, visibility: e.target.value })}
+                    aria-describedby="parameterVisibilityHelp"
+                  >
+                    <option value="Basic">Basic</option>
+                    <option value="Advanced">Advanced</option>
+                  </select>
+                  <div id="parameterVisibilityHelp" className="form-text text-muted">Choose the visibility level for this parameter.</div>
                 </div>
+                
+                {newParameter.type === 'Slider' && (
+                  <div className="mb-3">
+                    <label className="form-label">Slider Configuration</label>
+                    <div className="row g-3">
+                      <div className="col-md-4">
+                        <label htmlFor="sliderMin" className="form-label">Min</label>
+                        <input
+                          type="number"
+                          className="form-control"
+                          id="sliderMin"
+                          value={newParameter.config.min}
+                          onChange={(e) => setNewParameter({
+                            ...newParameter,
+                            config: {
+                              ...newParameter.config,
+                              min: parseInt(e.target.value, 10)
+                            }
+                          })}
+                        />
+                      </div>
+                      <div className="col-md-4">
+                        <label htmlFor="sliderMax" className="form-label">Max</label>
+                        <input
+                          type="number"
+                          className="form-control"
+                          id="sliderMax"
+                          value={newParameter.config.max}
+                          onChange={(e) => setNewParameter({
+                            ...newParameter,
+                            config: {
+                              ...newParameter.config,
+                              max: parseInt(e.target.value, 10)
+                            }
+                          })}
+                        />
+                      </div>
+                      <div className="col-md-4">
+                        <label htmlFor="sliderStep" className="form-label">Step</label>
+                        <input
+                          type="number"
+                          className="form-control"
+                          id="sliderStep"
+                          value={newParameter.config.step}
+                          onChange={(e) => setNewParameter({
+                            ...newParameter,
+                            config: {
+                              ...newParameter.config,
+                              step: parseInt(e.target.value, 10)
+                            }
+                          })}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {(newParameter.type === 'Dropdown' || newParameter.type === 'Radio Buttons' || newParameter.type === 'Checkbox') && (
+                  <div className="mb-3">
+                    <label className="form-label">Values</label>
+                    <div className="input-group mb-2">
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Add a value"
+                        value={newValue}
+                        onChange={(e) => setNewValue(e.target.value)}
+                      />
+                      <button
+                        type="button"
+                        className="btn btn-outline-secondary"
+                        onClick={() => {
+                          if (newValue.trim()) {
+                            setNewParameter({
+                              ...newParameter,
+                              values: [...newParameter.values, { label: newValue.trim() }]
+                            });
+                            setNewValue('');
+                          }
+                        }}
+                      >
+                        Add
+                      </button>
+                    </div>
+                    {newParameter.values.length > 0 && (
+                      <div className="list-group mt-2">
+                        {newParameter.values.map((value, index) => (
+                          <div key={index} className="list-group-item d-flex justify-content-between align-items-center">
+                            {value.label}
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline-danger"
+                              onClick={() => {
+                                setNewParameter({
+                                  ...newParameter,
+                                  values: newParameter.values.filter((_, i) => i !== index)
+                                });
+                              }}
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                {newParameter.type === 'Toggle Switch' && (
+                  <div className="mb-3">
+                    <label className="form-label">Toggle Labels</label>
+                    <div className="row g-3">
+                      <div className="col-md-6">
+                        <label htmlFor="toggleOn" className="form-label">On Label</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="toggleOn"
+                          placeholder="Yes"
+                          onChange={(e) => setNewParameter({
+                            ...newParameter,
+                            values: {
+                              ...(newParameter.values || {}),
+                              on: e.target.value
+                            }
+                          })}
+                        />
+                      </div>
+                      <div className="col-md-6">
+                        <label htmlFor="toggleOff" className="form-label">Off Label</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="toggleOff"
+                          placeholder="No"
+                          onChange={(e) => setNewParameter({
+                            ...newParameter,
+                            values: {
+                              ...(newParameter.values || {}),
+                              off: e.target.value
+                            }
+                          })}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
                 <button type="submit" className="btn btn-primary">
                   Add Parameter
                 </button>
@@ -244,7 +380,7 @@ function Parameters() {
                       <th scope="col">Type</th>
                       <th scope="col">Description</th>
                       <th scope="col">Category</th>
-                      <th scope="col">Visible</th>
+                      <th scope="col">Visibility</th>
                       <th scope="col" className="text-end">Actions</th>
                     </tr>
                   </thead>
@@ -259,11 +395,17 @@ function Parameters() {
                       parameters.map((parameter) => (
                         <tr key={parameter.id}>
                           <td>{parameter.name}</td>
-                          <td>{parameter.type}</td>
+                          <td>
+                            <span className={`badge bg-info`}>
+                              {parameter.type}
+                            </span>
+                          </td>
                           <td>{parameter.description}</td>
                           <td>{categories.find(c => c.id === parameter.categoryId)?.name}</td>
                           <td>
-                            {parameter.visibility ? '✓' : '✗'}
+                            <span className={`badge ${parameter.visibility === 'Basic' ? 'bg-success' : 'bg-primary'}`}>
+                              {parameter.visibility}
+                            </span>
                           </td>
                           <td className="text-end">
                             <button
@@ -334,10 +476,11 @@ function Parameters() {
                       onChange={(e) => setEditingParameter({ ...editingParameter, type: e.target.value })}
                       required
                     >
-                      <option value="string">String</option>
-                      <option value="number">Number</option>
-                      <option value="boolean">Boolean</option>
-                      <option value="array">Array</option>
+                      <option value="Dropdown">Dropdown</option>
+                      <option value="Slider">Slider</option>
+                      <option value="Toggle Switch">Toggle Switch</option>
+                      <option value="Radio Buttons">Radio Buttons</option>
+                      <option value="Checkbox">Checkbox</option>
                     </select>
                   </div>
                   <div className="mb-3">
@@ -367,21 +510,75 @@ function Parameters() {
                     </select>
                   </div>
                   <div className="mb-3">
-                    <div className="form-check">
-                      <input
-                        type="checkbox"
-                        className="form-check-input"
-                        id="editParameterVisibility"
-                        checked={editingParameter.visibility}
-                        onChange={(e) => setEditingParameter({ ...editingParameter, visibility: e.target.checked })}
-                      />
-                      <label className="form-check-label" htmlFor="editParameterVisibility">
-                        Visible to users
-                      </label>
-                    </div>
+                    <label htmlFor="editParameterVisibility" className="form-label">Visibility</label>
+                    <select
+                      className="form-select"
+                      id="editParameterVisibility"
+                      value={editingParameter.visibility}
+                      onChange={(e) => setEditingParameter({ ...editingParameter, visibility: e.target.value })}
+                    >
+                      <option value="Basic">Basic</option>
+                      <option value="Advanced">Advanced</option>
+                    </select>
                   </div>
                   
-                  {editingParameter.type === 'array' && (
+                  {editingParameter.type === 'Slider' && (
+                    <div className="mb-3">
+                      <label className="form-label">Slider Configuration</label>
+                      <div className="row g-3">
+                        <div className="col-md-4">
+                          <label htmlFor="editSliderMin" className="form-label">Min</label>
+                          <input
+                            type="number"
+                            className="form-control"
+                            id="editSliderMin"
+                            value={editingParameter.config?.min || 0}
+                            onChange={(e) => setEditingParameter({
+                              ...editingParameter,
+                              config: {
+                                ...(editingParameter.config || {}),
+                                min: parseInt(e.target.value, 10)
+                              }
+                            })}
+                          />
+                        </div>
+                        <div className="col-md-4">
+                          <label htmlFor="editSliderMax" className="form-label">Max</label>
+                          <input
+                            type="number"
+                            className="form-control"
+                            id="editSliderMax"
+                            value={editingParameter.config?.max || 100}
+                            onChange={(e) => setEditingParameter({
+                              ...editingParameter,
+                              config: {
+                                ...(editingParameter.config || {}),
+                                max: parseInt(e.target.value, 10)
+                              }
+                            })}
+                          />
+                        </div>
+                        <div className="col-md-4">
+                          <label htmlFor="editSliderStep" className="form-label">Step</label>
+                          <input
+                            type="number"
+                            className="form-control"
+                            id="editSliderStep"
+                            value={editingParameter.config?.step || 1}
+                            onChange={(e) => setEditingParameter({
+                              ...editingParameter,
+                              config: {
+                                ...(editingParameter.config || {}),
+                                step: parseInt(e.target.value, 10)
+                              }
+                            })}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {(editingParameter.type === 'Dropdown' || editingParameter.type === 'Radio Buttons' || editingParameter.type === 'Checkbox') && (
                     <div className="mb-3">
                       <label className="form-label">Values</label>
                       <div className="input-group mb-2">
@@ -395,24 +592,90 @@ function Parameters() {
                         <button
                           type="button"
                           className="btn btn-outline-secondary"
-                          onClick={handleAddValue}
+                          onClick={() => {
+                            if (newValue.trim()) {
+                              setEditingParameter({
+                                ...editingParameter,
+                                values: [...(Array.isArray(editingParameter.values) ? editingParameter.values : []), 
+                                  { label: newValue.trim() }]
+                              });
+                              setNewValue('');
+                            }
+                          }}
                         >
                           Add
                         </button>
                       </div>
                       <div className="list-group">
-                        {editingParameter.values.map((value, index) => (
+                        {Array.isArray(editingParameter.values) && editingParameter.values.map((value, index) => (
                           <div key={index} className="list-group-item d-flex justify-content-between align-items-center">
-                            {value}
+                            {value.label || value}
                             <button
                               type="button"
                               className="btn btn-sm btn-outline-danger"
-                              onClick={() => handleRemoveValue(index)}
+                              onClick={() => {
+                                setEditingParameter({
+                                  ...editingParameter,
+                                  values: editingParameter.values.filter((_, i) => i !== index)
+                                });
+                              }}
                             >
                               Remove
                             </button>
                           </div>
                         ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {editingParameter.type === 'Toggle Switch' && (
+                    <div className="mb-3">
+                      <label className="form-label">Toggle Labels</label>
+                      <div className="row g-3">
+                        <div className="col-md-6">
+                          <label htmlFor="editToggleOn" className="form-label">On Label</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="editToggleOn"
+                            value={
+                              typeof editingParameter.values === 'object' && 
+                              !Array.isArray(editingParameter.values) ? 
+                              editingParameter.values.on || '' : ''}
+                            onChange={(e) => setEditingParameter({
+                              ...editingParameter,
+                              values: {
+                                ...(typeof editingParameter.values === 'object' && 
+                                   !Array.isArray(editingParameter.values) ? 
+                                   editingParameter.values : {}),
+                                on: e.target.value
+                              }
+                            })}
+                            placeholder="Yes"
+                          />
+                        </div>
+                        <div className="col-md-6">
+                          <label htmlFor="editToggleOff" className="form-label">Off Label</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="editToggleOff"
+                            value={
+                              typeof editingParameter.values === 'object' && 
+                              !Array.isArray(editingParameter.values) ? 
+                              editingParameter.values.off || '' : ''}
+                            onChange={(e) => setEditingParameter({
+                              ...editingParameter,
+                              values: {
+                                ...(typeof editingParameter.values === 'object' && 
+                                   !Array.isArray(editingParameter.values) ? 
+                                   editingParameter.values : {}),
+                                off: e.target.value
+                              }
+                            })}
+                            placeholder="No"
+                          />
+                        </div>
                       </div>
                     </div>
                   )}

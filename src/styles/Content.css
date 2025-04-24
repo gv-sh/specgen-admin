@@ -1,0 +1,22 @@
+/* Content page specific styles */
+.fiction-content {
+  white-space: pre-line;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  line-height: 1.6;
+}
+
+.image-content img {
+  max-width: 100%;
+}
+
+.content-metadata pre {
+  font-size: 0.85rem;
+  background-color: #f8f9fa;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  overflow-x: auto;
+}
+
+.max-width-100 {
+  max-width: 100%;
+}
