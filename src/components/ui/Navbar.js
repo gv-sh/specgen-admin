@@ -8,7 +8,7 @@ function Navbar({ serverStatus }) {
   
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
-      <div className="container flex h-16 items-center justify-between py-4">
+      <div className="container flex h-16 items-center justify-between py-4 max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex items-center">
           <Link to="/" className="text-xl font-bold">
             Admin Dashboard
@@ -16,10 +16,10 @@ function Navbar({ serverStatus }) {
           <div className="ml-4">
             <Badge 
               variant={serverStatus === 'online' 
-                ? 'success' 
+                ? 'default' 
                 : serverStatus === 'error' 
-                ? 'warning' 
-                : 'danger'
+                ? 'secondary' 
+                : 'destructive'
               }
             >
               Server: {serverStatus}

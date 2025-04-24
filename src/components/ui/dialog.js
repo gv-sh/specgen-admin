@@ -2,7 +2,6 @@ import * as React from "react"
 import { cn } from "../../lib/utils"
 
 const Dialog = ({ children, isOpen, onDismiss }) => {
-  // Move useEffect outside the conditional
   const handleEscapeKey = React.useCallback((event) => {
     if (event.key === 'Escape' && onDismiss) {
       onDismiss();
@@ -12,11 +11,11 @@ const Dialog = ({ children, isOpen, onDismiss }) => {
   React.useEffect(() => {
     if (isOpen) {
       document.addEventListener('keydown', handleEscapeKey);
-      document.body.classList.add('modal-open');
+      document.body.style.overflow = 'hidden';
       
       return () => {
         document.removeEventListener('keydown', handleEscapeKey);
-        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
       };
     }
     return undefined;
@@ -25,7 +24,10 @@ const Dialog = ({ children, isOpen, onDismiss }) => {
   if (!isOpen) return null;
   
   return (
-    <div className="modal-overlay" onClick={onDismiss}>
+    <div 
+      className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center animate-fadeIn"
+      onClick={onDismiss}
+    >
       <div 
         className="fixed z-50 w-full max-w-md p-4 md:w-full" 
         onClick={e => e.stopPropagation()}
@@ -40,7 +42,7 @@ const DialogContent = React.forwardRef(({ className, children, ...props }, ref) 
   <div
     ref={ref}
     className={cn(
-      "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg",
+      "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 rounded-2xl",
       className
     )}
     {...props}

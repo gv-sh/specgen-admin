@@ -71,15 +71,15 @@ function App() {
                     </p>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 space-y-0">
                     <Card className="hover:shadow-md transition-shadow">
                       <CardHeader>
                         <CardTitle>Categories</CardTitle>
                         <CardDescription>Manage fiction categories like Science Fiction, Fantasy, etc.</CardDescription>
                       </CardHeader>
                       <CardContent className="pt-4">
-                        <Link to="/categories">
-                          <Button className="w-full">Manage Categories</Button>
+                        <Link to="/categories" className="w-full">
+                          <Button variant="default" className="w-full">Manage Categories</Button>
                         </Link>
                       </CardContent>
                     </Card>
@@ -90,8 +90,8 @@ function App() {
                         <CardDescription>Configure generation parameters for each category.</CardDescription>
                       </CardHeader>
                       <CardContent className="pt-4">
-                        <Link to="/parameters">
-                          <Button className="w-full">Manage Parameters</Button>
+                        <Link to="/parameters" className="w-full">
+                          <Button variant="default" className="w-full">Manage Parameters</Button>
                         </Link>
                       </CardContent>
                     </Card>
@@ -102,8 +102,8 @@ function App() {
                         <CardDescription>View and manage generated fiction and images.</CardDescription>
                       </CardHeader>
                       <CardContent className="pt-4">
-                        <Link to="/content">
-                          <Button className="w-full">Manage Content</Button>
+                        <Link to="/content" className="w-full">
+                          <Button variant="default" className="w-full">Manage Content</Button>
                         </Link>
                       </CardContent>
                     </Card>

@@ -123,64 +123,70 @@ function Database() {
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold">Database Management</h1>
+          <p className="text-muted-foreground mt-1">Backup, restore, or reset your application database.</p>
         </div>
 
-        <Card className="shadow-sm">
-          <CardHeader>
-            <CardTitle>Download Database</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground mb-4">Download a backup of the current database.</p>
-            <Button 
-              onClick={handleDownload}
-              disabled={isLoading}
-            >
-              {isLoading ? 'Downloading...' : 'Download Database'}
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-sm">
-          <CardHeader>
-            <CardTitle>Restore Database</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground mb-4">Restore the database from a backup file.</p>
-            <div className="space-y-4">
-              <Input
-                type="file"
-                ref={fileInputRef}
-                accept=".json"
-                onChange={handleFileSelect}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Card className="shadow-sm">
+            <CardHeader>
+              <CardTitle>Download Database</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col h-40 justify-between">
+              <p className="text-sm text-muted-foreground">Download a complete backup of the current database.</p>
+              <Button 
+                onClick={handleDownload}
                 disabled={isLoading}
-                className="mb-4"
-              />
-              <Button
-                variant="warning"
-                onClick={() => setShowRestoreModal(true)}
-                disabled={!selectedFile || isLoading}
+                className="mt-4"
               >
-                {isLoading ? 'Restoring...' : 'Restore Database'}
+                {isLoading ? 'Downloading...' : 'Download Database'}
               </Button>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <Card className="shadow-sm">
-          <CardHeader>
-            <CardTitle>Reset Database</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground mb-4">Reset the database to its initial state. This action cannot be undone.</p>
-            <Button
-              variant="destructive"
-              onClick={() => setShowResetModal(true)}
-              disabled={isLoading}
-            >
-              {isLoading ? 'Resetting...' : 'Reset Database'}
-            </Button>
-          </CardContent>
-        </Card>
+          <Card className="shadow-sm">
+            <CardHeader>
+              <CardTitle>Restore Database</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col h-40 justify-between">
+              <p className="text-sm text-muted-foreground">Restore the database from a backup file.</p>
+              <div className="space-y-2 mt-auto">
+                <Input
+                  type="file"
+                  ref={fileInputRef}
+                  accept=".json"
+                  onChange={handleFileSelect}
+                  disabled={isLoading}
+                  className="text-xs"
+                />
+                <Button
+                  variant="outline"
+                  onClick={() => setShowRestoreModal(true)}
+                  disabled={!selectedFile || isLoading}
+                  className="w-full"
+                >
+                  {isLoading ? 'Restoring...' : 'Restore Database'}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-sm">
+            <CardHeader>
+              <CardTitle>Reset Database</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col h-40 justify-between">
+              <p className="text-sm text-muted-foreground">Reset the database to its initial state. This action cannot be undone.</p>
+              <Button
+                variant="destructive"
+                onClick={() => setShowResetModal(true)}
+                disabled={isLoading}
+                className="mt-4"
+              >
+                {isLoading ? 'Resetting...' : 'Reset Database'}
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       {/* Restore Confirmation Modal */}
@@ -188,12 +194,20 @@ function Database() {
         isOpen={showRestoreModal} 
         onDismiss={() => setShowRestoreModal(false)}
       >
-        <DialogContent>
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Confirm Restore</DialogTitle>
           </DialogHeader>
           <div className="py-4">
-            <p>Are you sure you want to restore the database from the selected file? This will overwrite all current data.</p>
+            <p className="text-sm">Are you sure you want to restore the database from the selected file?</p>
+            <p className="text-sm font-medium text-amber-600 mt-2">This will overwrite all current data.</p>
+            {selectedFile && (
+              <div className="mt-4 p-3 bg-muted rounded-md text-xs">
+                <p className="font-medium">Selected file:</p>
+                <p className="truncate">{selectedFile.name}</p>
+                <p><span className="text-muted-foreground">Size:</span> {Math.round(selectedFile.size / 1024)} KB</p>
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button
@@ -220,12 +234,22 @@ function Database() {
         isOpen={showResetModal} 
         onDismiss={() => setShowResetModal(false)}
       >
-        <DialogContent>
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Confirm Reset</DialogTitle>
           </DialogHeader>
           <div className="py-4">
-            <p>Are you sure you want to reset the database? This will delete all data and cannot be undone.</p>
+            <p className="text-sm">Are you sure you want to reset the database?</p>
+            <p className="text-sm font-medium text-destructive mt-2">This will delete all data and cannot be undone.</p>
+            <div className="mt-4 p-3 bg-muted rounded-md">
+              <p className="text-xs"><span className="font-medium">The following will be cleared:</span></p>
+              <ul className="text-xs mt-1 space-y-1 list-disc pl-4">
+                <li>All categories</li>
+                <li>All parameters</li>
+                <li>All content items</li>
+                <li>All custom settings</li>
+              </ul>
+            </div>
           </div>
           <DialogFooter>
             <Button
@@ -241,7 +265,7 @@ function Database() {
                 handleReset();
               }}
             >
-              Reset
+              Reset Database
             </Button>
           </DialogFooter>
         </DialogContent>
