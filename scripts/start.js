@@ -18,9 +18,9 @@ function isPortAvailable(port) {
 
 // Function to find an available port
 async function findAvailablePort(startPort, maxAttempts = 10) {
-  // For admin, we want to stick to port 3000 if possible
-  if (startPort !== 3000) {
-    startPort = 3000;
+  // For admin, we want to stick to port 3001 since API is on 3000
+  if (startPort !== 3001) {
+    startPort = 3001;
   }
   
   for (let port = startPort; port < startPort + maxAttempts; port++) {
@@ -34,7 +34,7 @@ async function findAvailablePort(startPort, maxAttempts = 10) {
 // Start the React development server
 async function startServer() {
   try {
-    const port = await findAvailablePort(3000);
+    const port = await findAvailablePort(3001);
     
     const reactScriptsStart = spawn('react-scripts', ['start'], {
       stdio: 'inherit',

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import config from '../config';
-import '../styles/Content.css';
+import '../index.css';
 
 function Content() {
   const [contentItems, setContentItems] = useState([]);

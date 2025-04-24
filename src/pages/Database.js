@@ -1,18 +1,23 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
+import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle } from '../components/ui/dialog';
+import { Alert } from '../components/ui/alert';
 import config from '../config';
 
 function Database() {
   const [selectedFile, setSelectedFile] = useState(null);
   const fileInputRef = useRef(null);
-  const [alert, setAlert] = useState({ show: false, type: '', message: '' });
+  const [alert, setAlert] = useState({ show: false, variant: '', message: '' });
   const [isLoading, setIsLoading] = useState(false);
   const [showRestoreModal, setShowRestoreModal] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
 
-  const showAlertMessage = (type, message) => {
-    setAlert({ show: true, type, message });
-    setTimeout(() => setAlert({ show: false, type: '', message: '' }), 5000);
+  const showAlertMessage = (variant, message) => {
+    setAlert({ show: true, variant, message });
+    setTimeout(() => setAlert({ show: false, variant: '', message: '' }), 5000);
   };
 
   const handleDownload = async () => {
@@ -33,7 +38,9 @@ function Database() {
       }
 
       // Create a JSON string from the response data
-      const jsonString = JSON.stringify(response.data, null, 2);
+      // If the database is empty, use an empty object as the default
+      const data = response.data || {};
+      const jsonString = JSON.stringify(data, null, 2);
       const blob = new Blob([jsonString], { type: 'application/json' });
       const url = window.URL.createObjectURL(blob);
       
@@ -108,174 +115,139 @@ function Database() {
     <>
       {/* Alert Messages */}
       {alert.show && (
-        <div className={`alert alert-${alert.type} alert-dismissible fade show shadow-sm`} role="alert">
+        <Alert variant={alert.variant} onDismiss={() => setAlert({ show: false, variant: '', message: '' })}>
           {alert.message}
-          <button type="button" className="btn-close" onClick={() => setAlert({ show: false, type: '', message: '' })} aria-label="Close"></button>
-        </div>
+        </Alert>
       )}
 
-      <div className="row mb-4">
-        <div className="col-12">
-          <div className="d-flex align-items-center mb-4">
-            <div className="mb-0">Database Management</div>
-          </div>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold">Database Management</h1>
         </div>
-      </div>
 
-      <div className="row">
-        <div className="col-12">
-          <div className="card shadow-sm mb-4">
-            <div className="card-header bg-white">
-              <div className="card-title mb-0">Download Database</div>
-            </div>
-            <div className="card-body">
-              <p className="text-muted mb-3">Download a backup of the current database.</p>
-              <button
-                className="btn btn-primary"
-                onClick={handleDownload}
+        <Card className="shadow-sm">
+          <CardHeader>
+            <CardTitle>Download Database</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground mb-4">Download a backup of the current database.</p>
+            <Button 
+              onClick={handleDownload}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Downloading...' : 'Download Database'}
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="shadow-sm">
+          <CardHeader>
+            <CardTitle>Restore Database</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground mb-4">Restore the database from a backup file.</p>
+            <div className="space-y-4">
+              <Input
+                type="file"
+                ref={fileInputRef}
+                accept=".json"
+                onChange={handleFileSelect}
                 disabled={isLoading}
-                aria-label="Download database"
-              >
-                {isLoading ? 'Downloading...' : 'Download Database'}
-              </button>
-            </div>
-          </div>
-
-          <div className="card shadow-sm mb-4">
-            <div className="card-header bg-white">
-              <div className="card-title mb-0">Restore Database</div>
-            </div>
-            <div className="card-body">
-              <p className="text-muted mb-3">Restore the database from a backup file.</p>
-              <div className="mb-3">
-                <input
-                  type="file"
-                  className="form-control"
-                  accept=".json"
-                  onChange={handleFileSelect}
-                  disabled={isLoading}
-                  aria-label="Select database file"
-                />
-              </div>
-              <button
-                className="btn btn-warning"
-                onClick={() => {
-                  setShowRestoreModal(true);
-                }}
+                className="mb-4"
+              />
+              <Button
+                variant="warning"
+                onClick={() => setShowRestoreModal(true)}
                 disabled={!selectedFile || isLoading}
-                aria-label="Restore database"
               >
                 {isLoading ? 'Restoring...' : 'Restore Database'}
-              </button>
+              </Button>
             </div>
-          </div>
+          </CardContent>
+        </Card>
 
-          <div className="card shadow-sm">
-            <div className="card-header bg-white">
-              <div className="card-title mb-0">Reset Database</div>
-            </div>
-            <div className="card-body">
-              <p className="text-muted mb-3">Reset the database to its initial state. This action cannot be undone.</p>
-              <button
-                className="btn btn-danger"
-                onClick={() => {
-                  setShowResetModal(true);
-                }}
-                disabled={isLoading}
-                aria-label="Reset database"
-              >
-                {isLoading ? 'Resetting...' : 'Reset Database'}
-              </button>
-            </div>
-          </div>
-        </div>
+        <Card className="shadow-sm">
+          <CardHeader>
+            <CardTitle>Reset Database</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground mb-4">Reset the database to its initial state. This action cannot be undone.</p>
+            <Button
+              variant="destructive"
+              onClick={() => setShowResetModal(true)}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Resetting...' : 'Reset Database'}
+            </Button>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Restore Confirmation Modal */}
-      {showRestoreModal && (
-        <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1" aria-labelledby="restoreModalLabel" aria-hidden="true">
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content shadow">
-              <div className="modal-header">
-                <div className="modal-title" id="restoreModalLabel">Confirm Restore</div>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => setShowRestoreModal(false)}
-                  aria-label="Close"
-                ></button>
-              </div>
-              <div className="modal-body">
-                <p>Are you sure you want to restore the database from the selected file? This will overwrite all current data.</p>
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => setShowRestoreModal(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-warning"
-                  onClick={() => {
-                    setShowRestoreModal(false);
-                    handleRestore();
-                  }}
-                >
-                  Restore
-                </button>
-              </div>
-            </div>
+      <Dialog 
+        isOpen={showRestoreModal} 
+        onDismiss={() => setShowRestoreModal(false)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Restore</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p>Are you sure you want to restore the database from the selected file? This will overwrite all current data.</p>
           </div>
-          <div className="modal-backdrop fade show"></div>
-        </div>
-      )}
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowRestoreModal(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="default"
+              onClick={() => {
+                setShowRestoreModal(false);
+                handleRestore();
+              }}
+            >
+              Restore
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Reset Confirmation Modal */}
-      {showResetModal && (
-        <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1" aria-labelledby="resetModalLabel" aria-hidden="true">
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content shadow">
-              <div className="modal-header">
-                <div className="modal-title" id="resetModalLabel">Confirm Reset</div>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => setShowResetModal(false)}
-                  aria-label="Close"
-                ></button>
-              </div>
-              <div className="modal-body">
-                <p>Are you sure you want to reset the database? This will delete all data and cannot be undone.</p>
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => setShowResetModal(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-danger"
-                  onClick={() => {
-                    setShowResetModal(false);
-                    handleReset();
-                  }}
-                >
-                  Reset
-                </button>
-              </div>
-            </div>
+      <Dialog 
+        isOpen={showResetModal} 
+        onDismiss={() => setShowResetModal(false)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Reset</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p>Are you sure you want to reset the database? This will delete all data and cannot be undone.</p>
           </div>
-          <div className="modal-backdrop fade show"></div>
-        </div>
-      )}
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowResetModal(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                setShowResetModal(false);
+                handleReset();
+              }}
+            >
+              Reset
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
 
-export default Database; 
+export default Database;

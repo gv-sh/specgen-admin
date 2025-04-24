@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Select } from '../components/ui/select';
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '../components/ui/table';
+import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle } from '../components/ui/dialog';
+import { Badge } from '../components/ui/badge';
+import { Alert } from '../components/ui/alert';
 import config from '../config';
 
 function Categories() {
@@ -11,15 +19,18 @@ function Categories() {
   });
   const [editingCategory, setEditingCategory] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [alert, setAlert] = useState({ show: false, type: '', message: '' });
+  const [alert, setAlert] = useState({ show: false, variant: '', message: '' });
 
   const fetchCategories = useCallback(async () => {
     try {
       const response = await axios.get(`${config.API_URL}/api/categories`);
-      setCategories(response.data.data);
+      setCategories(response.data.data || []);
     } catch (error) {
       console.error('Error fetching categories:', error);
-      showAlert('danger', 'Failed to fetch categories. Please try again.');
+      // Don't show alert for empty database
+      if (error.response && error.response.status !== 404) {
+        showAlert('destructive', 'Failed to fetch categories. Please try again.');
+      }
     }
   }, []);
 
@@ -31,12 +42,12 @@ function Categories() {
     e.preventDefault();
     try {
       await axios.post(`${config.API_URL}/api/categories`, newCategory);
-      setNewCategory({ name: '', description: '' });
+      setNewCategory({ name: '', description: '', visibility: 'Show' });
       fetchCategories();
-      showAlert('success', 'Category added successfully!');
+      showAlert('default', 'Category added successfully!');
     } catch (error) {
       console.error('Error adding category:', error);
-      showAlert('danger', 'Failed to add category. Please try again.');
+      showAlert('destructive', 'Failed to add category. Please try again.');
     }
   };
 
@@ -47,10 +58,10 @@ function Categories() {
       setEditingCategory(null);
       setShowModal(false);
       fetchCategories();
-      showAlert('success', 'Category updated successfully!');
+      showAlert('default', 'Category updated successfully!');
     } catch (error) {
       console.error('Error updating category:', error);
-      showAlert('danger', 'Failed to update category. Please try again.');
+      showAlert('destructive', 'Failed to update category. Please try again.');
     }
   };
 
@@ -59,229 +70,199 @@ function Categories() {
       try {
         await axios.delete(`${config.API_URL}/api/categories/${id}`);
         fetchCategories();
-        showAlert('success', 'Category deleted successfully!');
+        showAlert('default', 'Category deleted successfully!');
       } catch (error) {
         console.error('Error deleting category:', error);
-        showAlert('danger', 'Failed to delete category. Please try again.');
+        showAlert('destructive', 'Failed to delete category. Please try again.');
       }
     }
   };
 
-  const showAlert = (type, message) => {
-    setAlert({ show: true, type, message });
-    setTimeout(() => setAlert({ show: false, type: '', message: '' }), 5000);
+  const showAlert = (variant, message) => {
+    setAlert({ show: true, variant, message });
+    setTimeout(() => setAlert({ show: false, variant: '', message: '' }), 5000);
   };
 
   return (
     <>
       {/* Alert Messages */}
       {alert.show && (
-        <div className={`alert alert-${alert.type} alert-dismissible fade show shadow-sm`} role="alert">
+        <Alert variant={alert.variant} onDismiss={() => setAlert({ show: false, variant: '', message: '' })}>
           {alert.message}
-          <button type="button" className="btn-close" onClick={() => setAlert({ show: false, type: '', message: '' })} aria-label="Close"></button>
-        </div>
+        </Alert>
       )}
 
-      <div className="row mb-4">
-        <div className="col-12">
-          <div className="d-flex align-items-center mb-4">
-            <div className="mb-0">Categories</div>
-          </div>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold">Categories</h1>
         </div>
-      </div>
 
-      <div className="row">
-        <div className="col-12">
-          <div className="card shadow-sm mb-4">
-            <div className="card-header bg-white">
-              <div className="card-title mb-0">Add New Category</div>
-            </div>
-            <div className="card-body">
-              <form onSubmit={handleAddCategory}>
-                <div className="mb-3">
-                  <label htmlFor="categoryName" className="form-label">Name</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="categoryName"
-                    value={newCategory.name}
-                    onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
-                    required
-                    aria-describedby="categoryNameHelp"
-                  />
-                  <div id="categoryNameHelp" className="form-text text-muted">Enter a descriptive name for the category.</div>
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="categoryDescription" className="form-label">Description</label>
-                  <textarea
-                    className="form-control"
-                    id="categoryDescription"
-                    rows="3"
-                    value={newCategory.description}
-                    onChange={(e) => setNewCategory({ ...newCategory, description: e.target.value })}
-                    aria-describedby="categoryDescriptionHelp"
-                  />
-                  <div id="categoryDescriptionHelp" className="form-text text-muted">Provide additional details about this category.</div>
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="categoryVisibility" className="form-label">Visibility</label>
-                  <select
-                    className="form-select"
-                    id="categoryVisibility"
-                    value={newCategory.visibility}
-                    onChange={(e) => setNewCategory({ ...newCategory, visibility: e.target.value })}
-                    aria-describedby="categoryVisibilityHelp"
-                  >
-                    <option value="Show">Show</option>
-                    <option value="Hide">Hide</option>
-                  </select>
-                  <div id="categoryVisibilityHelp" className="form-text text-muted">Whether to show or hide this category in the user interface.</div>
-                </div>
-                <button type="submit" className="btn btn-primary">
-                  Add Category
-                </button>
-              </form>
-            </div>
-          </div>
-
-          <div className="card shadow-sm">
-            <div className="card-header bg-white">
-              <div className="card-title mb-0">Categories</div>
-            </div>
-            <div className="card-body">
-              <div className="table-responsive">
-                <table className="table align-middle">
-                  <thead>
-                    <tr>
-                      <th scope="col">Name</th>
-                      <th scope="col">Description</th>
-                      <th scope="col">Visibility</th>
-                      <th scope="col" className="text-end">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {categories.length === 0 ? (
-                      <tr>
-                        <td colSpan="4" className="text-center text-muted py-4">
-                          No categories found. Add your first category above.
-                        </td>
-                      </tr>
-                    ) : (
-                      categories.map((category) => (
-                        <tr key={category.id}>
-                          <td>{category.name}</td>
-                          <td>{category.description}</td>
-                          <td>
-                            <span className={`badge ${category.visibility === 'Show' ? 'bg-success' : 'bg-secondary'}`}>
-                              {category.visibility}
-                            </span>
-                          </td>
-                          <td className="text-end">
-                            <button
-                              className="btn btn-sm btn-primary me-2"
-                              onClick={() => {
-                                setEditingCategory(category);
-                                setShowModal(true);
-                              }}
-                              aria-label={`Edit ${category.name}`}
-                            >
-                              Edit
-                            </button>
-                            <button
-                              className="btn btn-sm btn-danger"
-                              onClick={() => handleDeleteCategory(category.id)}
-                              aria-label={`Delete ${category.name}`}
-                            >
-                              Delete
-                            </button>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
+        <Card>
+          <CardHeader>
+            <CardTitle>Add New Category</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleAddCategory} className="space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="categoryName" className="text-sm font-medium">Name</label>
+                <Input
+                  id="categoryName"
+                  value={newCategory.name}
+                  onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
+                  required
+                />
+                <p className="text-sm text-muted-foreground">Enter a descriptive name for the category.</p>
               </div>
-            </div>
-          </div>
-        </div>
+              
+              <div className="space-y-2">
+                <label htmlFor="categoryDescription" className="text-sm font-medium">Description</label>
+                <textarea
+                  id="categoryDescription"
+                  className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  value={newCategory.description}
+                  onChange={(e) => setNewCategory({ ...newCategory, description: e.target.value })}
+                />
+                <p className="text-sm text-muted-foreground">Provide additional details about this category.</p>
+              </div>
+              
+              <div className="space-y-2">
+                <label htmlFor="categoryVisibility" className="text-sm font-medium">Visibility</label>
+                <Select
+                  id="categoryVisibility"
+                  value={newCategory.visibility}
+                  onChange={(e) => setNewCategory({ ...newCategory, visibility: e.target.value })}
+                >
+                  <option value="Show">Show</option>
+                  <option value="Hide">Hide</option>
+                </Select>
+                <p className="text-sm text-muted-foreground">Whether to show or hide this category in the user interface.</p>
+              </div>
+              
+              <Button type="submit">Add Category</Button>
+            </form>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Categories</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Description</TableHead>
+                  <TableHead>Visibility</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {categories.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan="4" className="text-center text-muted-foreground py-10">
+                      No categories found. Database may be empty. Add your first category above.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  categories.map((category) => (
+                    <TableRow key={category.id}>
+                      <TableCell>{category.name}</TableCell>
+                      <TableCell>{category.description}</TableCell>
+                      <TableCell>
+                        <Badge variant={category.visibility === 'Show' ? 'default' : 'outline'}>
+                          {category.visibility}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="mr-2"
+                          onClick={() => {
+                            setEditingCategory(category);
+                            setShowModal(true);
+                          }}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDeleteCategory(category.id)}
+                        >
+                          Delete
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Edit Category Modal */}
-      {showModal && (
-        <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content shadow">
-              <div className="modal-header">
-                <div className="modal-title" id="editCategoryModalLabel">Edit Category</div>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => {
-                    setShowModal(false);
-                    setEditingCategory(null);
-                  }}
-                  aria-label="Close"
-                ></button>
-              </div>
-              <form onSubmit={handleUpdateCategory}>
-                <div className="modal-body">
-                  <div className="mb-3">
-                    <label htmlFor="editCategoryName" className="form-label">Name</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="editCategoryName"
-                      value={editingCategory.name}
-                      onChange={(e) => setEditingCategory({ ...editingCategory, name: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label htmlFor="editCategoryDescription" className="form-label">Description</label>
-                    <textarea
-                      className="form-control"
-                      id="editCategoryDescription"
-                      rows="3"
-                      value={editingCategory.description}
-                      onChange={(e) => setEditingCategory({ ...editingCategory, description: e.target.value })}
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label htmlFor="editCategoryVisibility" className="form-label">Visibility</label>
-                    <select
-                      className="form-select"
-                      id="editCategoryVisibility"
-                      value={editingCategory.visibility}
-                      onChange={(e) => setEditingCategory({ ...editingCategory, visibility: e.target.value })}
-                    >
-                      <option value="Show">Show</option>
-                      <option value="Hide">Hide</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="modal-footer">
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    onClick={() => {
-                      setShowModal(false);
-                      setEditingCategory(null);
-                    }}
-                  >
-                    Cancel
-                  </button>
-                  <button type="submit" className="btn btn-primary">
-                    Update
-                  </button>
-                </div>
-              </form>
+      <Dialog isOpen={showModal} onDismiss={() => {
+        setShowModal(false);
+        setEditingCategory(null);
+      }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Category</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleUpdateCategory} className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label htmlFor="editCategoryName" className="text-sm font-medium">Name</label>
+              <Input
+                id="editCategoryName"
+                value={editingCategory?.name || ''}
+                onChange={(e) => setEditingCategory({ ...editingCategory, name: e.target.value })}
+                required
+              />
             </div>
-          </div>
-          <div className="modal-backdrop fade show"></div>
-        </div>
-      )}
+            
+            <div className="space-y-2">
+              <label htmlFor="editCategoryDescription" className="text-sm font-medium">Description</label>
+              <textarea
+                id="editCategoryDescription"
+                className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                value={editingCategory?.description || ''}
+                onChange={(e) => setEditingCategory({ ...editingCategory, description: e.target.value })}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <label htmlFor="editCategoryVisibility" className="text-sm font-medium">Visibility</label>
+              <Select
+                id="editCategoryVisibility"
+                value={editingCategory?.visibility || 'Show'}
+                onChange={(e) => setEditingCategory({ ...editingCategory, visibility: e.target.value })}
+              >
+                <option value="Show">Show</option>
+                <option value="Hide">Hide</option>
+              </Select>
+            </div>
+            
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setShowModal(false);
+                  setEditingCategory(null);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button type="submit">Update</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
 
-export default Categories; 
+export default Categories;
