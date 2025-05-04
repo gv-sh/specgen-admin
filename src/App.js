@@ -5,6 +5,7 @@ import Parameters from './pages/Parameters';
 import Content from './pages/Content';
 import Settings from './pages/Settings';
 import Database from './pages/Database';
+import Generate from './pages/Generate';
 import Layout from './components/Layout';
 import Navbar from './components/ui/Navbar';
 import Footer from './components/ui/Footer';
@@ -60,6 +61,7 @@ function App() {
               <Route path="/categories" element={<Categories />} />
               <Route path="/parameters" element={<Parameters />} />
               <Route path="/content" element={<Content />} />
+              <Route path="/generate" element={<Generate />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/database" element={<Database />} />
               <Route path="/" element={
@@ -104,6 +106,20 @@ function App() {
                       <CardContent className="pt-4">
                         <Link to="/content" className="w-full">
                           <Button variant="default" className="w-full">Manage Content</Button>
+                        </Link>
+                      </CardContent>
+                    </Card>
+                  </div>
+                  
+                  <div className="mx-auto max-w-md">
+                    <Card className="hover:shadow-md transition-shadow border-primary/30">
+                      <CardHeader>
+                        <CardTitle>Generate New Content</CardTitle>
+                        <CardDescription>Create new fiction, images or combined content.</CardDescription>
+                      </CardHeader>
+                      <CardContent className="pt-4">
+                        <Link to="/generate" className="w-full">
+                          <Button variant="default" className="w-full">Generate Content</Button>
                         </Link>
                       </CardContent>
                     </Card>

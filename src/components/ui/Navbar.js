@@ -52,6 +52,13 @@ function Navbar({ serverStatus }) {
               </Link>
             </NavigationMenuItem>
             <NavigationMenuItem>
+              <Link to="/generate" className="block">
+                <NavigationMenuLink active={location.pathname === '/generate'}>
+                  Generate
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
               <Link to="/settings" className="block">
                 <NavigationMenuLink active={location.pathname === '/settings'}>
                   Settings
