@@ -17,6 +17,8 @@ function Content() {
   const [contentItems, setContentItems] = useState([]);
   const [filteredContent, setFilteredContent] = useState([]);
   const [contentTypeFilter, setContentTypeFilter] = useState('');
+  const [yearFilter, setYearFilter] = useState('');
+  const [availableYears, setAvailableYears] = useState([]);
   const [selectedContent, setSelectedContent] = useState(null);
   const [editContent, setEditContent] = useState(null);
   const [showViewModal, setShowViewModal] = useState(false);
@@ -34,10 +36,39 @@ function Content() {
     }
   };
 
+  // Fetch available years for filtering
+  const fetchAvailableYears = useCallback(async () => {
+    try {
+      const response = await axios.get(`${config.API_URL}/api/content/years`);
+      setAvailableYears(response.data.data || []);
+    } catch (error) {
+      console.error('Error fetching years:', error);
+      // Don't show alert for this error as it's not critical
+    }
+  }, []);
+
+  // Modified to support both type and year filters
   const fetchContent = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get(`${config.API_URL}/api/content${contentTypeFilter ? `?type=${contentTypeFilter}` : ''}`);
+      
+      // Build URL with query parameters
+      let url = `${config.API_URL}/api/content`;
+      const params = [];
+      
+      if (contentTypeFilter) {
+        params.push(`type=${contentTypeFilter}`);
+      }
+      
+      if (yearFilter) {
+        params.push(`year=${yearFilter}`);
+      }
+      
+      if (params.length > 0) {
+        url += `?${params.join('&')}`;
+      }
+      
+      const response = await axios.get(url);
       setContentItems(response.data.data);
       setFilteredContent(response.data.data);
     } catch (error) {
@@ -46,14 +77,19 @@ function Content() {
     } finally {
       setIsLoading(false);
     }
-  }, [contentTypeFilter]);
+  }, [contentTypeFilter, yearFilter]);
 
   useEffect(() => {
     fetchContent();
-  }, [fetchContent]);
+    fetchAvailableYears(); // Fetch available years when component mounts
+  }, [fetchContent, fetchAvailableYears]);
 
-  const handleFilterChange = (e) => {
+  const handleTypeFilterChange = (e) => {
     setContentTypeFilter(e.target.value);
+  };
+
+  const handleYearFilterChange = (e) => {
+    setYearFilter(e.target.value);
   };
 
   const showAlert = (type, message) => {
@@ -189,16 +225,28 @@ function Content() {
       <div className="space-y-6 mb-6">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold">Generated Content</h2>
-          <div>
+          <div className="flex space-x-2">
             <Select
               className="w-40"
               value={contentTypeFilter}
-              onChange={handleFilterChange}
+              onChange={handleTypeFilterChange}
               aria-label="Filter content by type"
             >
               <option value="">All Content</option>
               <option value="fiction">Fiction Only</option>
               <option value="image">Images Only</option>
+            </Select>
+            
+            <Select
+              className="w-40"
+              value={yearFilter}
+              onChange={handleYearFilterChange}
+              aria-label="Filter content by year"
+            >
+              <option value="">All Years</option>
+              {availableYears.map(year => (
+                <option key={year} value={year}>{year}</option>
+              ))}
             </Select>
           </div>
         </div>
@@ -224,6 +272,7 @@ function Content() {
                   <TableRow className="bg-muted/50">
                     <TableHead>Title</TableHead>
                     <TableHead>Type</TableHead>
+                    <TableHead>Year</TableHead>
                     <TableHead>Created</TableHead>
                     <TableHead>Last Updated</TableHead>
                     <TableHead className="w-[200px] text-right">Actions</TableHead>
@@ -241,6 +290,7 @@ function Content() {
                           {item.type === 'fiction' ? 'Fiction' : 'Image'}
                         </span>
                       </TableCell>
+                      <TableCell>{item.year || "—"}</TableCell>
                       <TableCell className="text-sm text-muted-foreground">{formatDate(item.createdAt)}</TableCell>
                       <TableCell className="text-sm text-muted-foreground">{formatDate(item.updatedAt)}</TableCell>
                       <TableCell className="text-right space-x-1">
@@ -281,7 +331,7 @@ function Content() {
         </CardContent>
       </Card>
 
-      {/* View Content Modal */}
+      {/* View Content Modal - unchanged */}
       {showViewModal && selectedContent && (
         <Dialog isOpen={showViewModal} onDismiss={() => setShowViewModal(false)}>
           <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
@@ -289,6 +339,7 @@ function Content() {
               <DialogTitle className="text-xl font-semibold">{selectedContent.title}</DialogTitle>
               <p className="text-sm text-muted-foreground mt-1">
                 Created {formatDate(selectedContent.createdAt)}
+                {selectedContent.year && <span> • Year: {selectedContent.year}</span>}
               </p>
             </DialogHeader>
 
