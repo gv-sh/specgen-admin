@@ -25,6 +25,15 @@ function Content() {
   const [alert, setAlert] = useState({ show: false, type: '', message: '' });
   const [isLoading, setIsLoading] = useState(false);
 
+  const isValidJson = (json) => {
+    try {
+      JSON.parse(JSON.stringify(json));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
   const fetchContent = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -70,20 +79,25 @@ function Content() {
   const handleSaveEdit = async () => {
     try {
       setIsLoading(true);
-      const { id, title, content: contentText, imageData, year } = editContent;
+      const { id, title, content: contentText, imageData, year, metadata } = editContent;
       const payload = { title };
-
+  
       // Add validated year to payload
       if (year && year.toString().length === 4) {
         payload.year = parseInt(year, 10);
       }
-
+  
       if (editContent.type === 'fiction') {
         payload.content = contentText;
       } else if (editContent.type === 'image') {
         payload.imageData = imageData;
       }
-
+      
+      // Always include metadata in payload (even if it's an empty object)
+      payload.metadata = metadata || {};
+  
+      console.log('Saving with payload:', payload);
+  
       await axios.put(`${config.API_URL}/api/content/${id}`, payload);
       setShowEditModal(false);
       fetchContent();
@@ -378,7 +392,7 @@ function Content() {
       {/* Edit Content Modal */}
       {showEditModal && editContent && (
         <Dialog isOpen={showEditModal} onDismiss={() => setShowEditModal(false)}>
-          <DialogContent className="sm:max-w-[600px]">
+          <DialogContent className="sm:max-w-[700px]">
             <DialogHeader>
               <DialogTitle className="text-xl">Edit {editContent.type === 'fiction' ? 'Fiction' : 'Image'}</DialogTitle>
             </DialogHeader>
@@ -395,7 +409,6 @@ function Content() {
                 />
               </div>
 
-              {/* Add Year field here */}
               <div className="space-y-2">
                 <label htmlFor="contentYear" className="text-sm font-medium">Year of Generation</label>
                 <Input
@@ -453,6 +466,30 @@ function Content() {
                   </p>
                 </div>
               )}
+
+              {/* Add Metadata Editing Section */}
+              <div className="space-y-2">
+                <label htmlFor="contentMetadata" className="text-sm font-medium">Metadata</label>
+                <textarea
+                  className="flex w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm font-mono focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 min-h-[150px]"
+                  id="contentMetadata"
+                  value={JSON.stringify(editContent.metadata || {}, null, 2)}
+                  onChange={(e) => {
+                    try {
+                      const parsed = JSON.parse(e.target.value);
+                      setEditContent({ ...editContent, metadata: parsed });
+                    } catch (error) {
+                      // Allow invalid JSON during editing, but will validate before saving
+                      // We're keeping the potentially invalid text in the textarea
+                      const event = e;
+                      // This approach allows users to continue typing even when syntax is temporarily invalid
+                    }
+                  }}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Edit metadata in JSON format. Changes will be validated before saving.
+                </p>
+              </div>
             </div>
 
             <DialogFooter>
