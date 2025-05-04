@@ -444,7 +444,7 @@ function Content() {
                         className="flex items-center gap-1 rounded-md px-3 py-1 h-8 text-xs bg-background/80 hover:bg-background"
                         onClick={() => handleDownloadText(selectedContent.content, selectedContent.title)}
                       >
-                        <Download className="h-3.5 w-3.5 opacity-70" /> Download
+                        <Download className="h-3.5 w-3.5 opacity-70" /> Download Text
                       </Button>
                     </div>
                     <div className="prose prose-sm max-w-none rounded-lg border border-border/50 p-4 bg-transparent">
@@ -472,7 +472,7 @@ function Content() {
                             className="flex items-center gap-1 rounded-md px-3 py-1 h-8 text-xs bg-background/80 hover:bg-background"
                             onClick={() => handleDownloadImage(selectedContent.imageData, selectedContent.title)}
                           >
-                            <Download className="h-3.5 w-3.5 opacity-70" /> Download
+                            <Download className="h-3.5 w-3.5 opacity-70" /> Download Image
                           </Button>
                         </div>
                         <div className="flex justify-center p-4 rounded-lg border border-border/50 bg-transparent">
@@ -490,6 +490,26 @@ function Content() {
                       </div>
                     )}
                   </div>
+                  
+                  {/* Download Both Option */}
+                  {selectedContent.content && selectedContent.imageData && (
+                    <div className="combined-download border-t pt-4">
+                      <div className="flex justify-center">
+                        <Button
+                          variant="default"
+                          size="sm"
+                          className="flex items-center gap-1 rounded-md px-4 py-2 h-10 text-sm"
+                          onClick={() => {
+                            // Download both text and image
+                            handleDownloadText(selectedContent.content, `${selectedContent.title}-text`);
+                            handleDownloadImage(selectedContent.imageData, `${selectedContent.title}-image`);
+                          }}
+                        >
+                          <Download className="h-4 w-4 mr-1" /> Download Both Files
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
