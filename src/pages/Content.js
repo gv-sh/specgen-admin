@@ -91,6 +91,16 @@ function Content() {
   const handleYearFilterChange = (e) => {
     setYearFilter(e.target.value);
   };
+  
+  // Helper function to determine content type label
+  const getContentTypeLabel = (type) => {
+    switch(type) {
+      case 'fiction': return 'Fiction';
+      case 'image': return 'Image';
+      case 'combined': return 'Combined';
+      default: return type;
+    }
+  };
 
   const showAlert = (type, message) => {
     setAlert({ show: true, type, message });
@@ -123,9 +133,14 @@ function Content() {
         payload.year = parseInt(year, 10);
       }
   
+      // Handle different content types
       if (editContent.type === 'fiction') {
         payload.content = contentText;
       } else if (editContent.type === 'image') {
+        payload.imageData = imageData;
+      } else if (editContent.type === 'combined') {
+        // For combined type, include both content and imageData
+        payload.content = contentText;
         payload.imageData = imageData;
       }
       
@@ -235,6 +250,7 @@ function Content() {
               <option value="">All Content</option>
               <option value="fiction">Fiction Only</option>
               <option value="image">Images Only</option>
+              <option value="combined">Combined Only</option>
             </Select>
             
             <Select
@@ -286,8 +302,10 @@ function Content() {
                         <span className={`px-2 py-0.5 text-xs rounded-md inline-flex items-center
                           ${item.type === 'fiction'
                             ? 'text-blue-600 dark:text-blue-400'
-                            : 'text-purple-600 dark:text-purple-400'}`}>
-                          {item.type === 'fiction' ? 'Fiction' : 'Image'}
+                            : item.type === 'image'
+                            ? 'text-purple-600 dark:text-purple-400'
+                            : 'text-green-600 dark:text-green-400'}`}>
+                          {item.type === 'fiction' ? 'Fiction' : item.type === 'image' ? 'Image' : 'Combined'}
                         </span>
                       </TableCell>
                       <TableCell>{item.year || "—"}</TableCell>
@@ -368,7 +386,7 @@ function Content() {
                     <p className="text-sm whitespace-pre-line text-foreground/90">{selectedContent.content}</p>
                   </div>
                 </div>
-              ) : (
+              ) : selectedContent.type === 'image' ? (
                 <div className="image-content">
                   {selectedContent.imageData ? (
                     <>
@@ -404,6 +422,74 @@ function Content() {
                       <p className="text-sm text-muted-foreground">No image data available</p>
                     </div>
                   )}
+                </div>
+              ) : (
+                // Handle combined type (both fiction and image)
+                <div className="combined-content space-y-8">
+                  {/* Fiction Part */}
+                  <div className="fiction-content">
+                    <h3 className="text-md font-semibold mb-2">Story Content</h3>
+                    <div className="flex justify-end space-x-2 mb-6">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex items-center gap-1 rounded-md px-3 py-1 h-8 text-xs bg-background/80 hover:bg-background"
+                        onClick={() => handleCopyContent(selectedContent.content)}
+                      >
+                        <Clipboard className="h-3.5 w-3.5 opacity-70" /> Copy
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex items-center gap-1 rounded-md px-3 py-1 h-8 text-xs bg-background/80 hover:bg-background"
+                        onClick={() => handleDownloadText(selectedContent.content, selectedContent.title)}
+                      >
+                        <Download className="h-3.5 w-3.5 opacity-70" /> Download
+                      </Button>
+                    </div>
+                    <div className="prose prose-sm max-w-none rounded-lg border border-border/50 p-4 bg-transparent">
+                      <p className="text-sm whitespace-pre-line text-foreground/90">{selectedContent.content}</p>
+                    </div>
+                  </div>
+                  
+                  {/* Image Part */}
+                  <div className="image-content">
+                    <h3 className="text-md font-semibold mb-2">Accompanying Image</h3>
+                    {selectedContent.imageData ? (
+                      <>
+                        <div className="flex justify-end space-x-2 mb-6">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="flex items-center gap-1 rounded-md px-3 py-1 h-8 text-xs bg-background/80 hover:bg-background"
+                            onClick={() => handleCopyContent(`data:image/png;base64,${selectedContent.imageData}`)}
+                          >
+                            <Clipboard className="h-3.5 w-3.5 opacity-70" /> Copy Data URL
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="flex items-center gap-1 rounded-md px-3 py-1 h-8 text-xs bg-background/80 hover:bg-background"
+                            onClick={() => handleDownloadImage(selectedContent.imageData, selectedContent.title)}
+                          >
+                            <Download className="h-3.5 w-3.5 opacity-70" /> Download
+                          </Button>
+                        </div>
+                        <div className="flex justify-center p-4 rounded-lg border border-border/50 bg-transparent">
+                          <img
+                            src={`data:image/png;base64,${selectedContent.imageData}`}
+                            alt={selectedContent.title}
+                            className="rounded-md max-w-full mx-auto shadow-md"
+                            style={{ maxHeight: '500px' }}
+                          />
+                        </div>
+                      </>
+                    ) : (
+                      <div className="text-center py-12 rounded-lg border border-border/50 bg-transparent">
+                        <p className="text-sm text-muted-foreground">No image data available</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
 
