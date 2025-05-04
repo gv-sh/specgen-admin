@@ -4,12 +4,10 @@ import config from '../config';
 import '../index.css';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
-import { Badge } from '../components/ui/badge';
 import { Alert } from '../components/ui/alert';
 import { Select } from '../components/ui/select';
 import { Input } from '../components/ui/input';
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '../components/ui/table';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter } from '../components/ui/sheet';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../components/ui/dialog';
 import { Clipboard, Download } from 'lucide-react';
 
@@ -27,14 +25,6 @@ function Content() {
   const [alert, setAlert] = useState({ show: false, type: '', message: '' });
   const [isLoading, setIsLoading] = useState(false);
 
-  const isValidJson = (json) => {
-    try {
-      JSON.parse(JSON.stringify(json));
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
 
   // Fetch available years for filtering
   const fetchAvailableYears = useCallback(async () => {
@@ -93,14 +83,6 @@ function Content() {
   };
   
   // Helper function to determine content type label
-  const getContentTypeLabel = (type) => {
-    switch(type) {
-      case 'fiction': return 'Fiction';
-      case 'image': return 'Image';
-      case 'combined': return 'Combined';
-      default: return type;
-    }
-  };
 
   const showAlert = (type, message) => {
     setAlert({ show: true, type, message });
@@ -638,7 +620,6 @@ function Content() {
                     } catch (error) {
                       // Allow invalid JSON during editing, but will validate before saving
                       // We're keeping the potentially invalid text in the textarea
-                      const event = e;
                       // This approach allows users to continue typing even when syntax is temporarily invalid
                     }
                   }}

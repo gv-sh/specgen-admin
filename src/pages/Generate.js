@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -10,7 +9,6 @@ import { Alert } from '../components/ui/alert';
 import config from '../config';
 
 function Generate() {
-  const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [parameters, setParameters] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -161,9 +159,6 @@ function Generate() {
 
   // This function is no longer used as content is saved automatically after generation
   // Keeping the function stub here for potential future use
-  const handleSave = async () => {
-    // Functionality moved to the handleGenerate function
-  };
 
   const showAlert = (variant, message) => {
     setAlert({ show: true, variant, message });

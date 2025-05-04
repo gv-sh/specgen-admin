@@ -2,13 +2,24 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import config, { updateApiUrl } from '../config';
 import '../index.css';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Select } from '../components/ui/select';
 import { Badge } from '../components/ui/badge';
 import { Alert } from '../components/ui/alert';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../components/ui/dialog';
+
+// Default settings for highlighting
+const DEFAULT_SETTINGS = {
+  ai: {
+    models: { fiction: 'gpt-4o-mini', image: 'dall-e-3' },
+    parameters: {
+      fiction: { temperature: 1.0, max_tokens: 1000, default_story_length: 500 },
+      image: { size: '1024x1024', quality: 'standard' }
+    }
+  },
+  defaults: { content_type: 'fiction' }
+};
 
 function Settings() {
   const [settings, setSettings] = useState({
@@ -259,6 +270,7 @@ function Settings() {
                     id="fictionModel"
                     value={settings.ai.models.fiction}
                     onChange={(e) => handleSettingsChange('ai', 'models', 'fiction', e.target.value)}
+                    className={settings.ai.models.fiction !== DEFAULT_SETTINGS.ai.models.fiction ? 'border border-yellow-500' : ''}
                   />
                   <p className="text-xs text-muted-foreground">
                     The AI model used for fiction generation (e.g., "gpt-4o-mini")
@@ -270,6 +282,7 @@ function Settings() {
                     id="imageModel"
                     value={settings.ai.models.image}
                     onChange={(e) => handleSettingsChange('ai', 'models', 'image', e.target.value)}
+                    className={settings.ai.models.image !== DEFAULT_SETTINGS.ai.models.image ? 'border border-yellow-500' : ''}
                   />
                   <p className="text-xs text-muted-foreground">
                     The AI model used for image generation (e.g., "dall-e-3")
@@ -299,6 +312,7 @@ function Settings() {
                       ...settings.ai.parameters.fiction,
                       temperature: parseFloat(e.target.value)
                     })}
+                    className={settings.ai.parameters.fiction.temperature !== DEFAULT_SETTINGS.ai.parameters.fiction.temperature ? 'border border-yellow-500' : ''}
                   />
                   <p className="text-xs text-muted-foreground">
                     Controls randomness (0.0 to 2.0)
@@ -316,6 +330,7 @@ function Settings() {
                       ...settings.ai.parameters.fiction,
                       max_tokens: parseInt(e.target.value, 10)
                     })}
+                    className={settings.ai.parameters.fiction.max_tokens !== DEFAULT_SETTINGS.ai.parameters.fiction.max_tokens ? 'border border-yellow-500' : ''}
                   />
                   <p className="text-xs text-muted-foreground">
                     Maximum tokens to generate
@@ -333,6 +348,7 @@ function Settings() {
                       ...settings.ai.parameters.fiction,
                       default_story_length: parseInt(e.target.value, 10)
                     })}
+                    className={settings.ai.parameters.fiction.default_story_length !== DEFAULT_SETTINGS.ai.parameters.fiction.default_story_length ? 'border border-yellow-500' : ''}
                   />
                   <p className="text-xs text-muted-foreground">
                     Default story length in words
@@ -358,6 +374,7 @@ function Settings() {
                       ...settings.ai.parameters.image,
                       size: e.target.value
                     })}
+                    className={settings.ai.parameters.image.size !== DEFAULT_SETTINGS.ai.parameters.image.size ? 'border border-yellow-500' : ''}
                   >
                     <option value="256x256">256x256</option>
                     <option value="512x512">512x512</option>
@@ -378,37 +395,13 @@ function Settings() {
                       ...settings.ai.parameters.image,
                       quality: e.target.value
                     })}
+                    className={settings.ai.parameters.image.quality !== DEFAULT_SETTINGS.ai.parameters.image.quality ? 'border border-yellow-500' : ''}
                   >
                     <option value="standard">Standard</option>
                     <option value="hd">HD</option>
                   </Select>
                   <p className="text-xs text-muted-foreground">
                     Quality of generated images
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Default Settings Card */}
-          <Card className="shadow-sm">
-            <CardHeader>
-              <CardTitle>Default Settings</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="max-w-md">
-                <div className="space-y-2">
-                  <label htmlFor="defaultContentType" className="text-sm font-medium">Default Content Type</label>
-                  <Select
-                    id="defaultContentType"
-                    value={settings.defaults.content_type}
-                    onChange={(e) => handleSettingsChange('defaults', null, 'content_type', e.target.value)}
-                  >
-                    <option value="fiction">Fiction</option>
-                    <option value="image">Image</option>
-                  </Select>
-                  <p className="text-xs text-muted-foreground">
-                    Default content type for generation
                   </p>
                 </div>
               </div>

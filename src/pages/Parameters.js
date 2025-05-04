@@ -6,7 +6,6 @@ import { Input } from '../components/ui/input';
 import { Select } from '../components/ui/select';
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '../components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle } from '../components/ui/dialog';
-import { Badge } from '../components/ui/badge';
 import { Alert } from '../components/ui/alert';
 import config from '../config';
 
