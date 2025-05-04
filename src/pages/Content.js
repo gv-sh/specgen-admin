@@ -70,15 +70,20 @@ function Content() {
   const handleSaveEdit = async () => {
     try {
       setIsLoading(true);
-      const { id, title, content: contentText, imageData } = editContent;
+      const { id, title, content: contentText, imageData, year } = editContent;
       const payload = { title };
-      
+
+      // Add validated year to payload
+      if (year && year.toString().length === 4) {
+        payload.year = parseInt(year, 10);
+      }
+
       if (editContent.type === 'fiction') {
         payload.content = contentText;
       } else if (editContent.type === 'image') {
         payload.imageData = imageData;
       }
-      
+
       await axios.put(`${config.API_URL}/api/content/${id}`, payload);
       setShowEditModal(false);
       fetchContent();
@@ -109,7 +114,7 @@ function Content() {
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleString();
   };
-  
+
   const handleCopyContent = async (content) => {
     try {
       await navigator.clipboard.writeText(content);
@@ -134,7 +139,7 @@ function Content() {
       showAlert('danger', 'Failed to download image');
     }
   };
-  
+
   const handleDownloadText = (text, title) => {
     try {
       const blob = new Blob([text], { type: 'text/plain' });
@@ -173,7 +178,7 @@ function Content() {
           <div>
             <Select
               className="w-40"
-              value={contentTypeFilter} 
+              value={contentTypeFilter}
               onChange={handleFilterChange}
               aria-label="Filter content by type"
             >
@@ -216,9 +221,9 @@ function Content() {
                       <TableCell className="font-medium">{item.title}</TableCell>
                       <TableCell>
                         <span className={`px-2 py-0.5 text-xs rounded-md inline-flex items-center
-                          ${item.type === 'fiction' 
-                          ? 'text-blue-600 dark:text-blue-400' 
-                          : 'text-purple-600 dark:text-purple-400'}`}>
+                          ${item.type === 'fiction'
+                            ? 'text-blue-600 dark:text-blue-400'
+                            : 'text-purple-600 dark:text-purple-400'}`}>
                           {item.type === 'fiction' ? 'Fiction' : 'Image'}
                         </span>
                       </TableCell>
@@ -272,22 +277,22 @@ function Content() {
                 Created {formatDate(selectedContent.createdAt)}
               </p>
             </DialogHeader>
-            
+
             <div className="py-6">
               {selectedContent.type === 'fiction' ? (
                 <div className="fiction-content">
                   <div className="flex justify-end space-x-2 mb-6">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
+                    <Button
+                      variant="outline"
+                      size="sm"
                       className="flex items-center gap-1 rounded-md px-3 py-1 h-8 text-xs bg-background/80 hover:bg-background"
                       onClick={() => handleCopyContent(selectedContent.content)}
                     >
                       <Clipboard className="h-3.5 w-3.5 opacity-70" /> Copy
                     </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
+                    <Button
+                      variant="outline"
+                      size="sm"
                       className="flex items-center gap-1 rounded-md px-3 py-1 h-8 text-xs bg-background/80 hover:bg-background"
                       onClick={() => handleDownloadText(selectedContent.content, selectedContent.title)}
                     >
@@ -303,17 +308,17 @@ function Content() {
                   {selectedContent.imageData ? (
                     <>
                       <div className="flex justify-end space-x-2 mb-6">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
+                        <Button
+                          variant="outline"
+                          size="sm"
                           className="flex items-center gap-1 rounded-md px-3 py-1 h-8 text-xs bg-background/80 hover:bg-background"
                           onClick={() => handleCopyContent(`data:image/png;base64,${selectedContent.imageData}`)}
                         >
                           <Clipboard className="h-3.5 w-3.5 opacity-70" /> Copy Data URL
                         </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
+                        <Button
+                          variant="outline"
+                          size="sm"
                           className="flex items-center gap-1 rounded-md px-3 py-1 h-8 text-xs bg-background/80 hover:bg-background"
                           onClick={() => handleDownloadImage(selectedContent.imageData, selectedContent.title)}
                         >
@@ -321,9 +326,9 @@ function Content() {
                         </Button>
                       </div>
                       <div className="flex justify-center p-4 rounded-lg border border-border/50 bg-transparent">
-                        <img 
-                          src={`data:image/png;base64,${selectedContent.imageData}`} 
-                          alt={selectedContent.title} 
+                        <img
+                          src={`data:image/png;base64,${selectedContent.imageData}`}
+                          alt={selectedContent.title}
                           className="rounded-md max-w-full mx-auto shadow-md"
                           style={{ maxHeight: '500px' }}
                         />
@@ -355,7 +360,7 @@ function Content() {
                 )}
               </div>
             </div>
-            
+
             <DialogFooter>
               <Button
                 variant="outline"
@@ -377,7 +382,7 @@ function Content() {
             <DialogHeader>
               <DialogTitle className="text-xl">Edit {editContent.type === 'fiction' ? 'Fiction' : 'Image'}</DialogTitle>
             </DialogHeader>
-            
+
             <div className="space-y-6 py-6">
               <div className="space-y-2">
                 <label htmlFor="contentTitle" className="text-sm font-medium">Title</label>
@@ -388,6 +393,30 @@ function Content() {
                   className="bg-background/50"
                   required
                 />
+              </div>
+
+              {/* Add Year field here */}
+              <div className="space-y-2">
+                <label htmlFor="contentYear" className="text-sm font-medium">Year of Generation</label>
+                <Input
+                  id="contentYear"
+                  type="number"
+                  value={editContent.year || new Date().getFullYear()}
+                  onChange={(e) => {
+                    const yearValue = e.target.value;
+                    // Only update if empty or valid number
+                    if (!yearValue || (yearValue.length <= 4 && /^\d+$/.test(yearValue))) {
+                      setEditContent({ ...editContent, year: yearValue });
+                    }
+                  }}
+                  placeholder={new Date().getFullYear().toString()}
+                  className="bg-background/50"
+                  min="1000"
+                  max="9999"
+                />
+                {editContent.year && (editContent.year.toString().length !== 4 || editContent.year < 1000 || editContent.year > 9999) && (
+                  <p className="text-xs text-destructive">Please enter a valid four-digit year</p>
+                )}
               </div>
 
               {editContent.type === 'fiction' && (
@@ -425,7 +454,7 @@ function Content() {
                 </div>
               )}
             </div>
-            
+
             <DialogFooter>
               <Button
                 variant="outline"
@@ -459,7 +488,7 @@ function Content() {
                 This action cannot be undone.
               </DialogDescription>
             </DialogHeader>
-            
+
             <div className="py-6">
               <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
                 <p className="text-sm text-destructive">
@@ -467,7 +496,7 @@ function Content() {
                 </p>
               </div>
             </div>
-            
+
             <DialogFooter>
               <Button
                 variant="outline"
