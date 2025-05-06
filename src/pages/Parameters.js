@@ -353,90 +353,185 @@ function Parameters() {
                 
                 {/* Type-specific Configuration */}
                 {(editingParameter?.type === 'Slider' || (!editingParameter && newParameter.type === 'Slider')) && (
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Slider Configuration</label>
-                    <div className="grid grid-cols-3 gap-4">
-                      <div>
-                        <label htmlFor="sliderMin" className="text-xs font-medium">Min</label>
-                        <Input
-                          id="sliderMin"
-                          type="number"
-                          value={editingParameter ? editingParameter.config?.min || 0 : newParameter.config.min}
-                          onChange={(e) => {
-                            if (editingParameter) {
-                              setEditingParameter({
-                                ...editingParameter,
-                                config: {
-                                  ...(editingParameter.config || {}),
-                                  min: parseInt(e.target.value, 10)
-                                }
-                              });
-                            } else {
-                              setNewParameter({
-                                ...newParameter,
-                                config: {
-                                  ...newParameter.config,
-                                  min: parseInt(e.target.value, 10)
-                                }
-                              });
-                            }
-                          }}
-                        />
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Slider Configuration</label>
+                      <div className="grid grid-cols-3 gap-4">
+                        <div>
+                          <label htmlFor="sliderMin" className="text-xs font-medium">Min</label>
+                          <Input
+                            id="sliderMin"
+                            type="number"
+                            value={editingParameter ? editingParameter.config?.min || 0 : newParameter.config.min}
+                            onChange={(e) => {
+                              if (editingParameter) {
+                                setEditingParameter({
+                                  ...editingParameter,
+                                  config: {
+                                    ...(editingParameter.config || {}),
+                                    min: parseInt(e.target.value, 10)
+                                  }
+                                });
+                              } else {
+                                setNewParameter({
+                                  ...newParameter,
+                                  config: {
+                                    ...newParameter.config,
+                                    min: parseInt(e.target.value, 10)
+                                  }
+                                });
+                              }
+                            }}
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="sliderMax" className="text-xs font-medium">Max</label>
+                          <Input
+                            id="sliderMax"
+                            type="number"
+                            value={editingParameter ? editingParameter.config?.max || 100 : newParameter.config.max}
+                            onChange={(e) => {
+                              if (editingParameter) {
+                                setEditingParameter({
+                                  ...editingParameter,
+                                  config: {
+                                    ...(editingParameter.config || {}),
+                                    max: parseInt(e.target.value, 10)
+                                  }
+                                });
+                              } else {
+                                setNewParameter({
+                                  ...newParameter,
+                                  config: {
+                                    ...newParameter.config,
+                                    max: parseInt(e.target.value, 10)
+                                  }
+                                });
+                              }
+                            }}
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="sliderStep" className="text-xs font-medium">Step</label>
+                          <Input
+                            id="sliderStep"
+                            type="number"
+                            value={editingParameter ? editingParameter.config?.step || 1 : newParameter.config.step}
+                            onChange={(e) => {
+                              if (editingParameter) {
+                                setEditingParameter({
+                                  ...editingParameter,
+                                  config: {
+                                    ...(editingParameter.config || {}),
+                                    step: parseInt(e.target.value, 10)
+                                  }
+                                });
+                              } else {
+                                setNewParameter({
+                                  ...newParameter,
+                                  config: {
+                                    ...newParameter.config,
+                                    step: parseInt(e.target.value, 10)
+                                  }
+                                });
+                              }
+                            }}
+                          />
+                        </div>
                       </div>
-                      <div>
-                        <label htmlFor="sliderMax" className="text-xs font-medium">Max</label>
-                        <Input
-                          id="sliderMax"
-                          type="number"
-                          value={editingParameter ? editingParameter.config?.max || 100 : newParameter.config.max}
-                          onChange={(e) => {
-                            if (editingParameter) {
-                              setEditingParameter({
-                                ...editingParameter,
-                                config: {
-                                  ...(editingParameter.config || {}),
-                                  max: parseInt(e.target.value, 10)
-                                }
-                              });
-                            } else {
-                              setNewParameter({
-                                ...newParameter,
-                                config: {
-                                  ...newParameter.config,
-                                  max: parseInt(e.target.value, 10)
-                                }
-                              });
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Slider Labels</label>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label htmlFor="sliderMinLabel" className="text-xs font-medium">Min Label</label>
+                          <Input
+                            id="sliderMinLabel"
+                            placeholder="Label for minimum value"
+                            value={
+                              editingParameter
+                                ? (Array.isArray(editingParameter.values) && editingParameter.values[0]?.label) || ''
+                                : (Array.isArray(newParameter.values) && newParameter.values[0]?.label) || ''
                             }
-                          }}
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="sliderStep" className="text-xs font-medium">Step</label>
-                        <Input
-                          id="sliderStep"
-                          type="number"
-                          value={editingParameter ? editingParameter.config?.step || 1 : newParameter.config.step}
-                          onChange={(e) => {
-                            if (editingParameter) {
-                              setEditingParameter({
-                                ...editingParameter,
-                                config: {
-                                  ...(editingParameter.config || {}),
-                                  step: parseInt(e.target.value, 10)
-                                }
-                              });
-                            } else {
-                              setNewParameter({
-                                ...newParameter,
-                                config: {
-                                  ...newParameter.config,
-                                  step: parseInt(e.target.value, 10)
-                                }
-                              });
+                            onChange={(e) => {
+                              if (editingParameter) {
+                                const updatedValues = Array.isArray(editingParameter.values) 
+                                  ? [...editingParameter.values] 
+                                  : [{}, {}];
+                                
+                                if (!updatedValues[0]) updatedValues[0] = {};
+                                if (!updatedValues[1]) updatedValues[1] = {};
+                                
+                                updatedValues[0].label = e.target.value;
+                                
+                                setEditingParameter({
+                                  ...editingParameter,
+                                  values: updatedValues
+                                });
+                              } else {
+                                const updatedValues = Array.isArray(newParameter.values)
+                                  ? [...newParameter.values]
+                                  : [{}, {}];
+                                
+                                if (!updatedValues[0]) updatedValues[0] = {};
+                                if (!updatedValues[1]) updatedValues[1] = {};
+                                
+                                updatedValues[0].label = e.target.value;
+                                
+                                setNewParameter({
+                                  ...newParameter,
+                                  values: updatedValues
+                                });
+                              }
+                            }}
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="sliderMaxLabel" className="text-xs font-medium">Max Label</label>
+                          <Input
+                            id="sliderMaxLabel"
+                            placeholder="Label for maximum value"
+                            value={
+                              editingParameter
+                                ? (Array.isArray(editingParameter.values) && editingParameter.values[1]?.label) || ''
+                                : (Array.isArray(newParameter.values) && newParameter.values[1]?.label) || ''
                             }
-                          }}
-                        />
+                            onChange={(e) => {
+                              if (editingParameter) {
+                                const updatedValues = Array.isArray(editingParameter.values)
+                                  ? [...editingParameter.values]
+                                  : [{}, {}];
+                                
+                                if (!updatedValues[0]) updatedValues[0] = {};
+                                if (!updatedValues[1]) updatedValues[1] = {};
+                                
+                                updatedValues[1].label = e.target.value;
+                                
+                                setEditingParameter({
+                                  ...editingParameter,
+                                  values: updatedValues
+                                });
+                              } else {
+                                const updatedValues = Array.isArray(newParameter.values)
+                                  ? [...newParameter.values]
+                                  : [{}, {}];
+                                
+                                if (!updatedValues[0]) updatedValues[0] = {};
+                                if (!updatedValues[1]) updatedValues[1] = {};
+                                
+                                updatedValues[1].label = e.target.value;
+                                
+                                setNewParameter({
+                                  ...newParameter,
+                                  values: updatedValues
+                                });
+                              }
+                            }}
+                          />
+                        </div>
                       </div>
+                      <p className="text-xs text-muted-foreground">Labels to display at the min and max positions of the slider</p>
                     </div>
                   </div>
                 )}
