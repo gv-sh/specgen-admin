@@ -12,7 +12,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Clipboard, Download } from 'lucide-react';
 
 function Content() {
-  const [contentItems, setContentItems] = useState([]);
   const [filteredContent, setFilteredContent] = useState([]);
   const [contentTypeFilter, setContentTypeFilter] = useState('');
   const [yearFilter, setYearFilter] = useState('');
@@ -59,7 +58,6 @@ function Content() {
       }
       
       const response = await axios.get(url);
-      setContentItems(response.data.data);
       setFilteredContent(response.data.data);
     } catch (error) {
       console.error('Error fetching content:', error);
