@@ -16,7 +16,10 @@
     "react-scripts": "5.0.1",
     "tailwind-merge": "^3.2.0",
     "tailwindcss-animate": "^1.0.7",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.35",
+    "tailwindcss": "^3.4.1"
   },
   "publishConfig": {
     "access": "public"
@@ -26,7 +29,10 @@
     "src/",
     "public/",
     "package.json",
-    "README.md"
+    "README.md",
+    "src/*.css",
+    "tailwind.config.js",
+    "postcss.config.js"
   ],
   "main": "build/static/js/main.*.js",
   "homepage": ".",
@@ -71,9 +77,6 @@
     ]
   },
   "devDependencies": {
-    "@shadcn/ui": "^0.0.4",
-    "autoprefixer": "^10.4.19",
-    "postcss": "^8.4.35",
-    "tailwindcss": "^3.4.1"
+    "@shadcn/ui": "^0.0.4"
   }
 }
