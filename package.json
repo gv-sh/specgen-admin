@@ -1,7 +1,6 @@
 {
-  "name": "specgen-admin",
-  "version": "0.1.0",
-  "private": true,
+  "name": "@gv-sh/specgen-admin",
+  "version": "0.4.0",
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
@@ -19,8 +18,36 @@
     "tailwindcss-animate": "^1.0.7",
     "web-vitals": "^2.1.4"
   },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "build/",
+    "src/",
+    "public/",
+    "package.json",
+    "README.md"
+  ],
+  "main": "build/static/js/main.*.js",
+  "homepage": ".",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gv-sh/specgen-admin.git"
+  },
+  "keywords": [
+    "react",
+    "admin",
+    "dashboard",
+    "specgen",
+    "fiction-generator",
+    "ui"
+  ],
+  "bugs": {
+    "url": "https://github.com/gv-sh/specgen-admin/issues"
+  },
   "scripts": {
     "start": "PORT=3001 react-scripts start",
+    "prepublishOnly": "npm run build",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
