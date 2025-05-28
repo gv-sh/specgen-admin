@@ -1,6 +1,6 @@
 {
   "name": "@gv-sh/specgen-admin",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
@@ -77,6 +77,7 @@
     ]
   },
   "devDependencies": {
-    "@shadcn/ui": "^0.0.4"
+    "@shadcn/ui": "^0.0.4",
+    "@tailwindcss/postcss": "^0.0.2"
   }
 }
