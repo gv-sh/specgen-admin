@@ -5,6 +5,7 @@ import '../index.css';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
+import { Textarea } from '../components/ui/textarea';
 import { Select } from '../components/ui/select';
 import { Badge } from '../components/ui/badge';
 import { Alert } from '../components/ui/alert';
@@ -14,8 +15,17 @@ const DEFAULT_SETTINGS = {
   ai: {
     models: { fiction: 'gpt-4o-mini', image: 'dall-e-3' },
     parameters: {
-      fiction: { temperature: 1.0, max_tokens: 1000, default_story_length: 500 },
-      image: { size: '1024x1024', quality: 'standard' }
+      fiction: { 
+        temperature: 1.0, 
+        max_tokens: 1000, 
+        default_story_length: 500,
+        system_prompt: "You are a speculative fiction generator trained to create vivid, original, and thought-provoking stories from the Global South—particularly Africa, Asia, and Latin America, with special focus on India. Your goal is to craft speculative fiction rooted deeply in the region's cultural, ecological, historical, and socio-political realities, while imagining bold, layered futures.\n\nEach story must:\n- Be grounded in the specific cultural and traditional context of the selected region.\n- Establish a logical continuity between the present year (e.g., 2025) and a user-defined future, showing how current realities evolve into future scenarios.\n- Be driven by the world-building parameters provided by the user. These parameters define societal structures, technologies, environments, and ideologies—use them as the foundation for constructing the speculative world.\n- Reflect the narrative parameters to shape voice, tone, style, and structure.\n\nGeneration Guidelines:\n- Begin from a recognizable present or near-present context, then extrapolate plausibly into the future.\n- Translate the user-defined world-building parameters into concrete details—institutions, environments, economies, belief systems, and everyday life.\n- Infuse speculative elements with grounding in local histories, belief systems, and lived realities.\n- Let the narrative parameters guide how the story is told—not just what happens.\n- Avoid Western-centric tropes. Think from within the chosen region's worldview—its languages, philosophies, conflicts, mythologies, and ways of knowing."
+      },
+      image: { 
+        size: '1024x1024', 
+        quality: 'standard',
+        prompt_suffix: "Create a photorealistic, visually rich and emotionally resonant scene inspired by the story. Include key narrative elements in the composition. Place characters from the story in the foreground with expressive, human-like features, posture, and emotion that reflect their role or experience in the narrative. Design the background to subtly or symbolically represent the setting, mood, or major events of the story. Do not include any text or lettering in the image. Let the image convey the story purely through visual form, composition, and atmosphere."
+      }
     }
   },
   defaults: { content_type: 'fiction' }
@@ -32,11 +42,13 @@ function Settings() {
         fiction: {
           temperature: 0,
           max_tokens: 0,
-          default_story_length: 0
+          default_story_length: 0,
+          system_prompt: ''
         },
         image: {
           size: '',
-          quality: ''
+          quality: '',
+          prompt_suffix: ''
         }
       }
     },
@@ -352,6 +364,51 @@ function Settings() {
                   />
                   <p className="text-xs text-muted-foreground">
                     Default story length in words
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* System Prompts Card */}
+          <Card className="shadow-sm">
+            <CardHeader>
+              <CardTitle>System Prompts</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <label htmlFor="systemPrompt" className="text-sm font-medium">Fiction Generation System Prompt</label>
+                  <Textarea
+                    id="systemPrompt"
+                    rows={8}
+                    value={settings.ai.parameters.fiction.system_prompt || ''}
+                    onChange={(e) => handleSettingsChange('ai', 'parameters', 'fiction', {
+                      ...settings.ai.parameters.fiction,
+                      system_prompt: e.target.value
+                    })}
+                    className={settings.ai.parameters.fiction.system_prompt !== DEFAULT_SETTINGS.ai.parameters.fiction.system_prompt ? 'border border-yellow-500' : ''}
+                    placeholder="Enter the system prompt that guides the AI's fiction generation behavior..."
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    This prompt defines how the AI should behave when generating fiction content. It sets the tone, style, and approach for story generation.
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="imagePromptSuffix" className="text-sm font-medium">Image Generation Prompt Suffix</label>
+                  <Textarea
+                    id="imagePromptSuffix"
+                    rows={4}
+                    value={settings.ai.parameters.image.prompt_suffix || ''}
+                    onChange={(e) => handleSettingsChange('ai', 'parameters', 'image', {
+                      ...settings.ai.parameters.image,
+                      prompt_suffix: e.target.value
+                    })}
+                    className={settings.ai.parameters.image.prompt_suffix !== DEFAULT_SETTINGS.ai.parameters.image.prompt_suffix ? 'border border-yellow-500' : ''}
+                    placeholder="Enter the suffix added to all image generation prompts..."
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    This text is automatically added to the end of all image generation prompts to ensure consistent style and quality.
                   </p>
                 </div>
               </div>
