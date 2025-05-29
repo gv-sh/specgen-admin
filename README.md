@@ -1,6 +1,6 @@
 # SpecGen Admin Interface
 
-[![Version](https://img.shields.io/badge/version-0.10.0-blue.svg)](https://github.com/gv-sh/specgen-admin)
+[![Version](https://img.shields.io/badge/version-0.10.3-blue.svg)](https://github.com/gv-sh/specgen-admin)
 
 The admin dashboard for SpecGen, providing a modern and user-friendly interface for managing speculative fiction generation parameters, content, and settings.
 
