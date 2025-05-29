@@ -77,7 +77,6 @@
     ]
   },
   "devDependencies": {
-    "@shadcn/ui": "^0.0.4",
-    "@tailwindcss/postcss": "^0.0.2"
+    "@shadcn/ui": "^0.0.4"
   }
 }
