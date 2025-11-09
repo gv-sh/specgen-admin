@@ -36,7 +36,6 @@ function Parameters() {
       const response = await axios.get(`${config.API_URL}/api/categories`);
       setCategories(response.data.data || []);
     } catch (error) {
-      console.error('Error fetching categories:', error);
       // Don't show alert for empty database
       if (error.response && error.response.status !== 404) {
         showAlert('destructive', 'Failed to fetch categories. Please try again.');
@@ -49,7 +48,6 @@ function Parameters() {
       const response = await axios.get(`${config.API_URL}/api/parameters`);
       setParameters(response.data.data || []);
     } catch (error) {
-      console.error('Error fetching parameters:', error);
       // Don't show alert for empty database
       if (error.response && error.response.status !== 404) {
         showAlert('destructive', 'Failed to fetch parameters. Please try again.');
@@ -83,7 +81,6 @@ function Parameters() {
       fetchParameters();
       showAlert('default', 'Parameter added successfully');
     } catch (error) {
-      console.error('Error adding parameter:', error);
       showAlert('destructive', 'Failed to add parameter');
     } finally {
       setIsLoading(false);
@@ -100,7 +97,6 @@ function Parameters() {
       fetchParameters();
       showAlert('default', 'Parameter updated successfully');
     } catch (error) {
-      console.error('Error updating parameter:', error);
       showAlert('destructive', 'Failed to update parameter');
     } finally {
       setIsLoading(false);
@@ -115,7 +111,6 @@ function Parameters() {
         fetchParameters();
         showAlert('default', 'Parameter deleted successfully');
       } catch (error) {
-        console.error('Error deleting parameter:', error);
         showAlert('destructive', 'Failed to delete parameter');
       } finally {
         setIsLoading(false);

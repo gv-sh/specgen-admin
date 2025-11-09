@@ -25,7 +25,6 @@ function Categories() {
       const response = await axios.get(`${config.API_URL}/api/categories`);
       setCategories(response.data.data || []);
     } catch (error) {
-      console.error('Error fetching categories:', error);
       // Don't show alert for empty database
       if (error.response && error.response.status !== 404) {
         showAlert('destructive', 'Failed to fetch categories. Please try again.');
@@ -45,7 +44,6 @@ function Categories() {
       fetchCategories();
       showAlert('default', 'Category added successfully!');
     } catch (error) {
-      console.error('Error adding category:', error);
       showAlert('destructive', 'Failed to add category. Please try again.');
     }
   };
@@ -59,7 +57,6 @@ function Categories() {
       fetchCategories();
       showAlert('default', 'Category updated successfully!');
     } catch (error) {
-      console.error('Error updating category:', error);
       showAlert('destructive', 'Failed to update category. Please try again.');
     }
   };
@@ -71,7 +68,6 @@ function Categories() {
         fetchCategories();
         showAlert('default', 'Category deleted successfully!');
       } catch (error) {
-        console.error('Error deleting category:', error);
         showAlert('destructive', 'Failed to delete category. Please try again.');
       }
     }
