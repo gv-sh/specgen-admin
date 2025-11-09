@@ -67,7 +67,6 @@ function Content() {
       const response = await axios.get(`${config.API_URL}/api/content/years`);
       setAvailableYears(response.data.data || []);
     } catch (error) {
-      console.error('Error fetching years:', error);
       // Don't show alert for this error as it's not critical
     }
   }, []);
@@ -102,7 +101,6 @@ function Content() {
       setTotalItems(response.data.pagination?.total || 0);
       setTotalPages(response.data.pagination?.totalPages || 0);
     } catch (error) {
-      console.error('Error fetching content:', error);
       showAlert('danger', 'Failed to fetch content. Please try again.');
       setFilteredContent([]);
       setTotalItems(0);
@@ -193,7 +191,6 @@ function Content() {
       fetchContent();
       showAlert('success', `Successfully deleted ${selectedItems.size} items`);
     } catch (error) {
-      console.error('Error deleting content:', error);
       showAlert('danger', 'Failed to delete some items. Please try again.');
     } finally {
       setIsLoading(false);
@@ -214,7 +211,6 @@ function Content() {
       const response = await axios.get(`${config.API_URL}/api/content/${contentId}`);
       return response.data.data;
     } catch (error) {
-      console.error('Error fetching full content:', error);
       showAlert('danger', 'Failed to load content details.');
       return null;
     } finally {
@@ -267,15 +263,12 @@ function Content() {
       
       // Always include metadata in payload (even if it's an empty object)
       payload.metadata = metadata || {};
-  
-      console.log('Saving with payload:', payload);
-  
+
       await axios.put(`${config.API_URL}/api/content/${id}`, payload);
       setShowEditModal(false);
       fetchContent();
       showAlert('success', 'Content updated successfully');
     } catch (error) {
-      console.error('Error updating content:', error);
       showAlert('danger', 'Failed to update content. Please try again.');
     } finally {
       setIsLoading(false);
@@ -290,7 +283,6 @@ function Content() {
       fetchContent();
       showAlert('success', 'Content deleted successfully');
     } catch (error) {
-      console.error('Error deleting content:', error);
       showAlert('danger', 'Failed to delete content. Please try again.');
     } finally {
       setIsLoading(false);
@@ -306,7 +298,6 @@ function Content() {
       await navigator.clipboard.writeText(content);
       showAlert('success', 'Content copied to clipboard');
     } catch (error) {
-      console.error('Error copying to clipboard:', error);
       showAlert('danger', 'Failed to copy to clipboard');
     }
   };
@@ -321,7 +312,6 @@ function Content() {
       document.body.removeChild(link);
       showAlert('success', 'Image downloaded successfully');
     } catch (error) {
-      console.error('Error downloading image:', error);
       showAlert('danger', 'Failed to download image');
     }
   };
@@ -339,7 +329,6 @@ function Content() {
       URL.revokeObjectURL(url);
       showAlert('success', 'Text downloaded successfully');
     } catch (error) {
-      console.error('Error downloading text:', error);
       showAlert('danger', 'Failed to download text');
     }
   };

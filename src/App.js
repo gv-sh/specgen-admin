@@ -23,19 +23,15 @@ function App() {
   useEffect(() => {
     const checkServerStatus = async () => {
       try {
-        console.log('Checking server status...');
         const response = await fetch(`${configRef.current.API_URL}/api/health/ping`);
         const data = await response.json();
-        
+
         if (response.ok && data.message === 'pong') {
-          console.log('Server is online');
           setServerStatus('online');
         } else {
-          console.log('Server returned error status', response.status);
           setServerStatus('error');
         }
       } catch (error) {
-        console.error('Server connection error:', error);
         setServerStatus('offline');
       }
     };

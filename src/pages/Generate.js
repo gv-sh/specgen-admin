@@ -29,7 +29,6 @@ function Generate() {
         const response = await axios.get(`${config.API_URL}/api/categories`);
         setCategories(response.data.data || []);
       } catch (error) {
-        console.error('Error fetching categories:', error);
         showAlert('destructive', 'Failed to fetch categories. Please try again.');
       }
     };
@@ -64,10 +63,9 @@ function Generate() {
               (param.values[0].id || param.values[0].label) : '';
           }
         });
-        
+
         setParameterValues(initialValues);
       } catch (error) {
-        console.error('Error fetching parameters:', error);
         showAlert('destructive', 'Failed to fetch parameters. Please try again.');
       }
     };
@@ -141,15 +139,13 @@ function Generate() {
         // Save to content collection
         await axios.post(`${config.API_URL}/api/content`, contentToSave);
         showAlert('default', 'Content generated and saved successfully!');
-        
+
       } catch (saveError) {
-        console.error('Error saving content:', saveError);
         showAlert('destructive', 'Content generated but could not be saved automatically.');
       } finally {
         setIsSaving(false);
       }
     } catch (error) {
-      console.error('Error generating content:', error);
       setError(error.response?.data?.error || 'Failed to generate content. Please try again.');
       showAlert('destructive', 'Generation failed. Please try again.');
     } finally {

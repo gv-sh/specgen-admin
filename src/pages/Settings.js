@@ -68,7 +68,6 @@ function Settings() {
       const response = await axios.get(`${config.API_URL}/api/settings`);
       setSettings(response.data.data);
     } catch (error) {
-      console.error('Error fetching settings:', error);
       showAlert('danger', 'Failed to fetch settings. Please try again.');
     } finally {
       setIsLoading(false);
@@ -90,7 +89,6 @@ function Settings() {
           setServerStatus('offline');
         }
       } catch (error) {
-        console.error('Initial connection check failed:', error);
         setServerStatus('offline');
       }
     };
@@ -128,7 +126,6 @@ function Settings() {
       await axios.put(`${config.API_URL}/api/settings`, settings);
       showAlert('success', 'Settings updated successfully');
     } catch (error) {
-      console.error('Error updating settings:', error);
       showAlert('danger', 'Failed to update settings. Please try again.');
     } finally {
       setIsLoading(false);
@@ -143,7 +140,6 @@ function Settings() {
         setSettings(response.data.data);
         showAlert('success', 'Settings reset to defaults');
       } catch (error) {
-        console.error('Error resetting settings:', error);
         showAlert('danger', 'Failed to reset settings. Please try again.');
       } finally {
         setIsLoading(false);
@@ -156,7 +152,6 @@ function Settings() {
     setIsTesting(true);
     try {
       const pingUrl = `${apiUrl}/api/health/ping`;
-      console.log('Testing connection to:', pingUrl);
       const response = await axios.get(pingUrl, { timeout: 5000 });
       
       if (response.status === 200 && response.data && response.data.message === 'pong') {
@@ -167,7 +162,6 @@ function Settings() {
         showAlert('danger', 'Server responded but with unexpected data');
       }
     } catch (error) {
-      console.error('Connection test failed:', error);
       setServerStatus('offline');
       showAlert('danger', `Failed to connect to API server: ${error.message}`);
     } finally {

@@ -28,16 +28,13 @@ function Database() {
   const handleDownloadCategories = async () => {
     try {
       setIsLoading(true);
-      console.log('Initiating database download...');
-      
+
       const response = await axios.get(`${config.API_URL}/api/database/download`, {
         headers: {
           'Accept': 'application/json'
         }
       });
-      
-      console.log('Download response received:', response);
-      
+
       if (response.status !== 200) {
         throw new Error(`Server returned status ${response.status}`);
       }
@@ -56,10 +53,9 @@ function Database() {
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
-      
+
       showAlertMessage('success', 'Database downloaded successfully');
     } catch (err) {
-      console.error('Download error:', err);
       showAlertMessage('danger', err.response?.data?.error || 'Failed to download database');
     } finally {
       setIsLoading(false);
@@ -69,16 +65,13 @@ function Database() {
   const handleDownloadGenerations = async () => {
     try {
       setIsLoading(true);
-      console.log('Initiating generations download...');
-      
+
       const response = await axios.get(`${config.API_URL}/api/database/generations/download`, {
         headers: {
           'Accept': 'application/json'
         }
       });
-      
-      console.log('Download response received:', response);
-      
+
       if (response.status !== 200) {
         throw new Error(`Server returned status ${response.status}`);
       }
@@ -97,10 +90,9 @@ function Database() {
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
-      
+
       showAlertMessage('success', 'Generations database downloaded successfully');
     } catch (err) {
-      console.error('Download error:', err);
       showAlertMessage('danger', err.response?.data?.error || 'Failed to download generations database');
     } finally {
       setIsLoading(false);
@@ -144,7 +136,6 @@ function Database() {
         fileInputRef.current.value = '';
       }
     } catch (err) {
-      console.error('Restore error:', err);
       showAlertMessage('danger', err.response?.data?.error || 'Failed to restore database');
     } finally {
       setIsLoading(false);
@@ -174,7 +165,6 @@ function Database() {
         generationsFileInputRef.current.value = '';
       }
     } catch (err) {
-      console.error('Generations restore error:', err);
       showAlertMessage('danger', err.response?.data?.error || 'Failed to restore generations database');
     } finally {
       setIsLoading(false);
@@ -187,7 +177,6 @@ function Database() {
       await axios.post(`${config.API_URL}/api/database/reset`);
       showAlertMessage('success', 'Database reset successfully');
     } catch (err) {
-      console.error('Reset error:', err);
       showAlertMessage('danger', err.response?.data?.error || 'Failed to reset database');
     } finally {
       setIsLoading(false);
@@ -200,7 +189,6 @@ function Database() {
       await axios.post(`${config.API_URL}/api/database/generations/reset`);
       showAlertMessage('success', 'Generations database reset successfully');
     } catch (err) {
-      console.error('Generations reset error:', err);
       showAlertMessage('danger', err.response?.data?.error || 'Failed to reset generations database');
     } finally {
       setIsLoading(false);
@@ -213,7 +201,6 @@ function Database() {
       await axios.post(`${config.API_URL}/api/database/reset-all`);
       showAlertMessage('success', 'All databases reset successfully');
     } catch (err) {
-      console.error('Reset all error:', err);
       showAlertMessage('danger', err.response?.data?.error || 'Failed to reset all databases');
     } finally {
       setIsLoading(false);
