@@ -3,10 +3,8 @@ import axios from 'axios';
 import config from '../config';
 import '../index.css';
 import { Card, CardContent } from '../components/ui/card';
-import { Button } from '../components/ui/button';
+import { Button, Select, Input } from '../components/ui/form-controls';
 import { Alert } from '../components/ui/alert';
-import { Select } from '../components/ui/select';
-import { Input } from '../components/ui/input';
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '../components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../components/ui/dialog';
 import { PaginationControls } from '../components/ui/pagination';
@@ -546,8 +544,7 @@ function Content() {
                       <TableCell className="text-right space-x-1">
                         <Button
                           variant="ghost"
-                          size="sm"
-                          className="h-8 px-2 text-xs"
+                          size="xs"
                           onClick={() => handleViewContent(item)}
                           aria-label={`View ${item.title}`}
                           disabled={isLoadingFullContent}
@@ -556,8 +553,7 @@ function Content() {
                         </Button>
                         <Button
                           variant="ghost"
-                          size="sm"
-                          className="h-8 px-2 text-xs"
+                          size="xs"
                           onClick={() => handleEditClick(item)}
                           aria-label={`Edit ${item.title}`}
                           disabled={isLoadingFullContent}
@@ -565,9 +561,8 @@ function Content() {
                           Edit
                         </Button>
                         <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 px-2 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
+                          variant="destructive-ghost"
+                          size="xs"
                           onClick={() => handleDeleteClick(item)}
                           aria-label={`Delete ${item.title}`}
                         >

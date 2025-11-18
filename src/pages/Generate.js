@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Select } from '../components/ui/select';
+import { Button, Input, Select } from '../components/ui/form-controls';
 import { Badge } from '../components/ui/badge';
 import { Alert } from '../components/ui/alert';
 import config from '../config';

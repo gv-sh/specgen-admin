@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Select } from '../components/ui/select';
+import { Button, Input, Select } from '../components/ui/form-controls';
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '../components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle } from '../components/ui/dialog';
 import { Alert } from '../components/ui/alert';
@@ -197,8 +195,7 @@ function Parameters() {
                           <div className="flex items-center gap-2">
                             <Button
                               variant="ghost"
-                              size="sm"
-                              className="h-8 px-2 text-xs"
+                              size="xs"
                               onClick={() => {
                                 setEditingParameter({...parameter});
                                 setShowModal(true);
@@ -207,9 +204,8 @@ function Parameters() {
                               Edit
                             </Button>
                             <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-8 px-2 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
+                              variant="destructive-ghost"
+                              size="xs"
                               onClick={() => handleDeleteParameter(parameter.id)}
                             >
                               Delete

@@ -3,9 +3,18 @@ import { Link, useLocation } from 'react-router-dom';
 import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink } from './navigation-menu';
 import { Badge } from './badge';
 
+const routes = [
+  { path: '/categories', label: 'Categories' },
+  { path: '/parameters', label: 'Parameters' },
+  { path: '/content', label: 'Content' },
+  { path: '/generate', label: 'Generate' },
+  { path: '/settings', label: 'Settings' },
+  { path: '/database', label: 'Database' }
+];
+
 function Navbar({ serverStatus }) {
   const location = useLocation();
-  
+
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
       <div className="container flex h-16 items-center justify-between py-4 max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -14,11 +23,11 @@ function Navbar({ serverStatus }) {
             Admin Dashboard
           </Link>
           <div className="ml-4">
-            <Badge 
-              variant={serverStatus === 'online' 
-                ? 'default' 
-                : serverStatus === 'error' 
-                ? 'secondary' 
+            <Badge
+              variant={serverStatus === 'online'
+                ? 'default'
+                : serverStatus === 'error'
+                ? 'secondary'
                 : 'destructive'
               }
             >
@@ -30,48 +39,15 @@ function Navbar({ serverStatus }) {
 
         <NavigationMenu>
           <NavigationMenuList>
-            <NavigationMenuItem>
-              <Link to="/categories" className="block">
-                <NavigationMenuLink active={location.pathname === '/categories'}>
-                  Categories
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <Link to="/parameters" className="block">
-                <NavigationMenuLink active={location.pathname === '/parameters'}>
-                  Parameters
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <Link to="/content" className="block">
-                <NavigationMenuLink active={location.pathname === '/content'}>
-                  Content
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <Link to="/generate" className="block">
-                <NavigationMenuLink active={location.pathname === '/generate'}>
-                  Generate
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <Link to="/settings" className="block">
-                <NavigationMenuLink active={location.pathname === '/settings'}>
-                  Settings
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <Link to="/database" className="block">
-                <NavigationMenuLink active={location.pathname === '/database'}>
-                  Database
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
+            {routes.map(({ path, label }) => (
+              <NavigationMenuItem key={path}>
+                <Link to={path} className="block">
+                  <NavigationMenuLink active={location.pathname === path}>
+                    {label}
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+            ))}
           </NavigationMenuList>
         </NavigationMenu>
       </div>

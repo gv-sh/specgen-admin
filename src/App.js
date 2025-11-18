@@ -6,13 +6,11 @@ import Content from './pages/Content';
 import Settings from './pages/Settings';
 import Database from './pages/Database';
 import Generate from './pages/Generate';
-import Layout from './components/Layout';
+import { Layout, Footer } from './components/layout';
 import Navbar from './components/ui/Navbar';
-import Footer from './components/ui/Footer';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './components/ui/card';
-import { Button } from './components/ui/button';
+import { Button } from './components/ui/form-controls';
 import config from './config';
-import './App.css';
 
 function App() {
   const [serverStatus, setServerStatus] = useState('offline');
