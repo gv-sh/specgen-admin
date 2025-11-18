@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Select } from '../components/ui/select';
+import { Button, Input, Select } from '../components/ui/form-controls';
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '../components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle } from '../components/ui/dialog';
 import { Alert } from '../components/ui/alert';

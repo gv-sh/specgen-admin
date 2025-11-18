@@ -1,8 +1,7 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
+import { Button, Input } from '../components/ui/form-controls';
 import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle } from '../components/ui/dialog';
 import { Alert } from '../components/ui/alert';
 import config from '../config';

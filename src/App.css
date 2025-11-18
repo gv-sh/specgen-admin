@@ -1,4 +1,0 @@
-/* Any app-specific styles that can't be handled with Tailwind */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;

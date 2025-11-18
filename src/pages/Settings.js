@@ -3,10 +3,7 @@ import axios from 'axios';
 import config, { updateApiUrl } from '../config';
 import '../index.css';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Textarea } from '../components/ui/textarea';
-import { Select } from '../components/ui/select';
+import { Button, Input, Textarea, Select } from '../components/ui/form-controls';
 import { Badge } from '../components/ui/badge';
 import { Alert } from '../components/ui/alert';
 
