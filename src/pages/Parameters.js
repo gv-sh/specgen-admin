@@ -195,8 +195,7 @@ function Parameters() {
                           <div className="flex items-center gap-2">
                             <Button
                               variant="ghost"
-                              size="sm"
-                              className="h-8 px-2 text-xs"
+                              size="xs"
                               onClick={() => {
                                 setEditingParameter({...parameter});
                                 setShowModal(true);
@@ -205,9 +204,8 @@ function Parameters() {
                               Edit
                             </Button>
                             <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-8 px-2 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
+                              variant="destructive-ghost"
+                              size="xs"
                               onClick={() => handleDeleteParameter(parameter.id)}
                             >
                               Delete

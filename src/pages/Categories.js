@@ -137,8 +137,7 @@ function Categories() {
                           <div className="flex items-center gap-2">
                             <Button
                               variant="ghost"
-                              size="sm"
-                              className="h-8 px-2 text-xs"
+                              size="xs"
                               onClick={() => {
                                 setEditingCategory(category);
                                 setShowModal(true);
@@ -147,9 +146,8 @@ function Categories() {
                               Edit
                             </Button>
                             <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-8 px-2 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
+                              variant="destructive-ghost"
+                              size="xs"
                               onClick={() => handleDeleteCategory(category.id)}
                             >
                               Delete

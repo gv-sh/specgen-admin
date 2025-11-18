@@ -73,6 +73,8 @@ const Button = React.forwardRef(({
           "border border-input bg-background hover:bg-accent hover:text-accent-foreground": variant === "outline",
           "bg-secondary text-secondary-foreground hover:bg-secondary/80": variant === "secondary",
           "bg-transparent text-foreground underline-offset-4 hover:underline": variant === "link",
+          "hover:bg-transparent": variant === "ghost",
+          "text-destructive hover:bg-destructive/10 hover:text-destructive": variant === "destructive-ghost",
           "h-10 px-4 py-2": size === "default",
           "h-9 rounded-md px-3": size === "sm",
           "h-11 rounded-md px-8": size === "lg",

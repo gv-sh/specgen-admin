@@ -544,8 +544,7 @@ function Content() {
                       <TableCell className="text-right space-x-1">
                         <Button
                           variant="ghost"
-                          size="sm"
-                          className="h-8 px-2 text-xs"
+                          size="xs"
                           onClick={() => handleViewContent(item)}
                           aria-label={`View ${item.title}`}
                           disabled={isLoadingFullContent}
@@ -554,8 +553,7 @@ function Content() {
                         </Button>
                         <Button
                           variant="ghost"
-                          size="sm"
-                          className="h-8 px-2 text-xs"
+                          size="xs"
                           onClick={() => handleEditClick(item)}
                           aria-label={`Edit ${item.title}`}
                           disabled={isLoadingFullContent}
@@ -563,9 +561,8 @@ function Content() {
                           Edit
                         </Button>
                         <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 px-2 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
+                          variant="destructive-ghost"
+                          size="xs"
                           onClick={() => handleDeleteClick(item)}
                           aria-label={`Delete ${item.title}`}
                         >
