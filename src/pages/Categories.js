@@ -9,10 +9,12 @@ import config from '../config';
 
 function Categories() {
   const [categories, setCategories] = useState([]);
-  const [newCategory, setNewCategory] = useState({ 
-    name: '', 
-    description: '', 
-    visibility: 'Show' 
+  const [newCategory, setNewCategory] = useState({
+    name: '',
+    description: '',
+    visibility: 'Show',
+    year: new Date().getFullYear(),
+    sort_order: 0
   });
   const [editingCategory, setEditingCategory] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -38,7 +40,7 @@ function Categories() {
     e.preventDefault();
     try {
       await axios.post(`${config.API_URL}/api/categories`, newCategory);
-      setNewCategory({ name: '', description: '', visibility: 'Show' });
+      setNewCategory({ name: '', description: '', visibility: 'Show', year: new Date().getFullYear(), sort_order: 0 });
       fetchCategories();
       showAlert('default', 'Category added successfully!');
     } catch (error) {
@@ -102,6 +104,8 @@ function Categories() {
                   <TableRow className="bg-muted/50">
                     <TableHead>Name</TableHead>
                     <TableHead>Description</TableHead>
+                    <TableHead>Year</TableHead>
+                    <TableHead>Sort Order</TableHead>
                     <TableHead>Visibility</TableHead>
                     <TableHead className="w-[140px]">Actions</TableHead>
                   </TableRow>
@@ -109,7 +113,7 @@ function Categories() {
                 <TableBody>
                   {categories.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan="4" className="text-center text-muted-foreground py-12 px-6">
+                      <TableCell colSpan="6" className="text-center text-muted-foreground py-12 px-6">
                         <div className="flex flex-col items-center gap-2">
                           <p>No categories found</p>
                           <p className="text-xs">Click "Add New Category" to create one</p>
@@ -126,9 +130,19 @@ function Categories() {
                           </span>
                         </TableCell>
                         <TableCell>
+                          <span className="text-sm text-muted-foreground">
+                            {category.year || "—"}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <span className="text-sm text-muted-foreground">
+                            {category.sort_order ?? 0}
+                          </span>
+                        </TableCell>
+                        <TableCell>
                           <span className={`inline-flex items-center text-xs
-                            ${category.visibility === 'Show' 
-                             ? 'text-emerald-600 dark:text-emerald-400 font-medium' 
+                            ${category.visibility === 'Show'
+                             ? 'text-emerald-600 dark:text-emerald-400 font-medium'
                              : 'text-slate-600 dark:text-slate-400'}`}>
                             {category.visibility}
                           </span>
@@ -208,7 +222,48 @@ function Categories() {
               />
               <p className="text-xs text-muted-foreground">A detailed description helps users understand what this category is used for</p>
             </div>
-            
+
+            <div className="space-y-2">
+              <label htmlFor="categoryYear" className="text-sm font-medium">Year</label>
+              <Input
+                id="categoryYear"
+                type="number"
+                value={editingCategory ? editingCategory.year : newCategory.year}
+                onChange={(e) => {
+                  const yearValue = e.target.value ? parseInt(e.target.value, 10) : '';
+                  if (editingCategory) {
+                    setEditingCategory({ ...editingCategory, year: yearValue });
+                  } else {
+                    setNewCategory({ ...newCategory, year: yearValue });
+                  }
+                }}
+                placeholder={new Date().getFullYear().toString()}
+                min="1000"
+                max="9999"
+              />
+              <p className="text-xs text-muted-foreground">The year associated with this category</p>
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="categorySortOrder" className="text-sm font-medium">Sort Order</label>
+              <Input
+                id="categorySortOrder"
+                type="number"
+                value={editingCategory ? editingCategory.sort_order : newCategory.sort_order}
+                onChange={(e) => {
+                  const sortValue = e.target.value ? parseInt(e.target.value, 10) : 0;
+                  if (editingCategory) {
+                    setEditingCategory({ ...editingCategory, sort_order: sortValue });
+                  } else {
+                    setNewCategory({ ...newCategory, sort_order: sortValue });
+                  }
+                }}
+                placeholder="0"
+                min="0"
+              />
+              <p className="text-xs text-muted-foreground">Lower numbers appear first in lists</p>
+            </div>
+
             <div className="space-y-2">
               <label htmlFor="categoryVisibility" className="text-sm font-medium">Visibility</label>
               <Select
