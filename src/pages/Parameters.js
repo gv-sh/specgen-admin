@@ -14,10 +14,12 @@ function Parameters() {
     name: '',
     description: '',
     type: 'Dropdown',
-    categoryId: '',
-    values: [],
+    category_id: '',
+    parameter_values: [],
     visibility: 'Basic',
-    config: {
+    required: 0,
+    sort_order: 0,
+    parameter_config: {
       min: 0,
       max: 100,
       step: 1
@@ -67,10 +69,12 @@ function Parameters() {
         name: '',
         description: '',
         type: 'Dropdown',
-        categoryId: '',
-        values: [],
+        category_id: '',
+        parameter_values: [],
         visibility: 'Basic',
-        config: {
+        required: 0,
+        sort_order: 0,
+        parameter_config: {
           min: 0,
           max: 100,
           step: 1
@@ -182,7 +186,7 @@ function Parameters() {
                             {parameter.description || "—"}
                           </span>
                         </TableCell>
-                        <TableCell>{categories.find(c => c.id === parameter.categoryId)?.name}</TableCell>
+                        <TableCell>{categories.find(c => c.id === parameter.category_id)?.name}</TableCell>
                         <TableCell>
                           <span className={`inline-flex items-center text-xs
                             ${parameter.visibility === 'Basic' 
@@ -282,12 +286,12 @@ function Parameters() {
                   <label htmlFor="parameterCategory" className="text-sm font-medium">Category</label>
                   <Select
                     id="parameterCategory"
-                    value={editingParameter ? editingParameter.categoryId : newParameter.categoryId}
+                    value={editingParameter ? editingParameter.category_id : newParameter.category_id}
                     onChange={(e) => {
                       if (editingParameter) {
-                        setEditingParameter({ ...editingParameter, categoryId: e.target.value });
+                        setEditingParameter({ ...editingParameter, category_id: e.target.value });
                       } else {
-                        setNewParameter({ ...newParameter, categoryId: e.target.value });
+                        setNewParameter({ ...newParameter, category_id: e.target.value });
                       }
                     }}
                     required
@@ -353,13 +357,13 @@ function Parameters() {
                           <Input
                             id="sliderMin"
                             type="number"
-                            value={editingParameter ? editingParameter.config?.min || 0 : newParameter.config.min}
+                            value={editingParameter ? editingParameter.parameter_config?.min || 0 : newParameter.parameter_config.min}
                             onChange={(e) => {
                               if (editingParameter) {
                                 setEditingParameter({
                                   ...editingParameter,
                                   config: {
-                                    ...(editingParameter.config || {}),
+                                    ...(editingParameter.parameter_config || {}),
                                     min: parseInt(e.target.value, 10)
                                   }
                                 });
@@ -367,7 +371,7 @@ function Parameters() {
                                 setNewParameter({
                                   ...newParameter,
                                   config: {
-                                    ...newParameter.config,
+                                    ...newParameter.parameter_config,
                                     min: parseInt(e.target.value, 10)
                                   }
                                 });
@@ -380,13 +384,13 @@ function Parameters() {
                           <Input
                             id="sliderMax"
                             type="number"
-                            value={editingParameter ? editingParameter.config?.max || 100 : newParameter.config.max}
+                            value={editingParameter ? editingParameter.parameter_config?.max || 100 : newParameter.parameter_config.max}
                             onChange={(e) => {
                               if (editingParameter) {
                                 setEditingParameter({
                                   ...editingParameter,
                                   config: {
-                                    ...(editingParameter.config || {}),
+                                    ...(editingParameter.parameter_config || {}),
                                     max: parseInt(e.target.value, 10)
                                   }
                                 });
@@ -394,7 +398,7 @@ function Parameters() {
                                 setNewParameter({
                                   ...newParameter,
                                   config: {
-                                    ...newParameter.config,
+                                    ...newParameter.parameter_config,
                                     max: parseInt(e.target.value, 10)
                                   }
                                 });
@@ -407,13 +411,13 @@ function Parameters() {
                           <Input
                             id="sliderStep"
                             type="number"
-                            value={editingParameter ? editingParameter.config?.step || 1 : newParameter.config.step}
+                            value={editingParameter ? editingParameter.parameter_config?.step || 1 : newParameter.parameter_config.step}
                             onChange={(e) => {
                               if (editingParameter) {
                                 setEditingParameter({
                                   ...editingParameter,
                                   config: {
-                                    ...(editingParameter.config || {}),
+                                    ...(editingParameter.parameter_config || {}),
                                     step: parseInt(e.target.value, 10)
                                   }
                                 });
@@ -421,7 +425,7 @@ function Parameters() {
                                 setNewParameter({
                                   ...newParameter,
                                   config: {
-                                    ...newParameter.config,
+                                    ...newParameter.parameter_config,
                                     step: parseInt(e.target.value, 10)
                                   }
                                 });
@@ -442,13 +446,13 @@ function Parameters() {
                             placeholder="Label for minimum value"
                             value={
                               editingParameter
-                                ? (Array.isArray(editingParameter.values) && editingParameter.values[0]?.label) || ''
-                                : (Array.isArray(newParameter.values) && newParameter.values[0]?.label) || ''
+                                ? (Array.isArray(editingParameter.parameter_values) && editingParameter.parameter_values[0]?.label) || ''
+                                : (Array.isArray(newParameter.parameter_values) && newParameter.parameter_values[0]?.label) || ''
                             }
                             onChange={(e) => {
                               if (editingParameter) {
-                                const updatedValues = Array.isArray(editingParameter.values) 
-                                  ? [...editingParameter.values] 
+                                const updatedValues = Array.isArray(editingParameter.parameter_values) 
+                                  ? [...editingParameter.parameter_values] 
                                   : [{}, {}];
                                 
                                 if (!updatedValues[0]) updatedValues[0] = {};
@@ -461,8 +465,8 @@ function Parameters() {
                                   values: updatedValues
                                 });
                               } else {
-                                const updatedValues = Array.isArray(newParameter.values)
-                                  ? [...newParameter.values]
+                                const updatedValues = Array.isArray(newParameter.parameter_values)
+                                  ? [...newParameter.parameter_values]
                                   : [{}, {}];
                                 
                                 if (!updatedValues[0]) updatedValues[0] = {};
@@ -485,13 +489,13 @@ function Parameters() {
                             placeholder="Label for maximum value"
                             value={
                               editingParameter
-                                ? (Array.isArray(editingParameter.values) && editingParameter.values[1]?.label) || ''
-                                : (Array.isArray(newParameter.values) && newParameter.values[1]?.label) || ''
+                                ? (Array.isArray(editingParameter.parameter_values) && editingParameter.parameter_values[1]?.label) || ''
+                                : (Array.isArray(newParameter.parameter_values) && newParameter.parameter_values[1]?.label) || ''
                             }
                             onChange={(e) => {
                               if (editingParameter) {
-                                const updatedValues = Array.isArray(editingParameter.values)
-                                  ? [...editingParameter.values]
+                                const updatedValues = Array.isArray(editingParameter.parameter_values)
+                                  ? [...editingParameter.parameter_values]
                                   : [{}, {}];
                                 
                                 if (!updatedValues[0]) updatedValues[0] = {};
@@ -504,8 +508,8 @@ function Parameters() {
                                   values: updatedValues
                                 });
                               } else {
-                                const updatedValues = Array.isArray(newParameter.values)
-                                  ? [...newParameter.values]
+                                const updatedValues = Array.isArray(newParameter.parameter_values)
+                                  ? [...newParameter.parameter_values]
                                   : [{}, {}];
                                 
                                 if (!updatedValues[0]) updatedValues[0] = {};
@@ -547,14 +551,14 @@ function Parameters() {
                               setEditingParameter({
                                 ...editingParameter,
                                 values: [
-                                  ...(Array.isArray(editingParameter.values) ? editingParameter.values : []), 
+                                  ...(Array.isArray(editingParameter.parameter_values) ? editingParameter.parameter_values : []), 
                                   { label: newValue.trim() }
                                 ]
                               });
                             } else {
                               setNewParameter({
                                 ...newParameter,
-                                values: [...newParameter.values, { label: newValue.trim() }]
+                                values: [...newParameter.parameter_values, { label: newValue.trim() }]
                               });
                             }
                             setNewValue('');
@@ -565,10 +569,10 @@ function Parameters() {
                       </Button>
                     </div>
                     
-                    {((editingParameter && Array.isArray(editingParameter.values) && editingParameter.values.length > 0) || 
-                      (!editingParameter && newParameter.values.length > 0)) && (
+                    {((editingParameter && Array.isArray(editingParameter.parameter_values) && editingParameter.parameter_values.length > 0) || 
+                      (!editingParameter && newParameter.parameter_values.length > 0)) && (
                       <div className="rounded-md border divide-y mt-2 max-h-[150px] overflow-y-auto">
-                        {(editingParameter ? editingParameter.values : newParameter.values).map((value, index) => (
+                        {(editingParameter ? editingParameter.parameter_values : newParameter.parameter_values).map((value, index) => (
                           <div key={index} className="flex justify-between items-center p-2">
                             <span>{value.label || value}</span>
                             <Button
@@ -579,12 +583,12 @@ function Parameters() {
                                 if (editingParameter) {
                                   setEditingParameter({
                                     ...editingParameter,
-                                    values: editingParameter.values.filter((_, i) => i !== index)
+                                    values: editingParameter.parameter_values.filter((_, i) => i !== index)
                                   });
                                 } else {
                                   setNewParameter({
                                     ...newParameter,
-                                    values: newParameter.values.filter((_, i) => i !== index)
+                                    values: newParameter.parameter_values.filter((_, i) => i !== index)
                                   });
                                 }
                               }}
@@ -609,17 +613,17 @@ function Parameters() {
                           id="toggleOn"
                           placeholder="Yes"
                           value={editingParameter ? 
-                            (typeof editingParameter.values === 'object' && !Array.isArray(editingParameter.values) ? 
-                            editingParameter.values.on || '' : '') : 
-                            (typeof newParameter.values === 'object' ? newParameter.values.on || '' : '')}
+                            (typeof editingParameter.parameter_values === 'object' && !Array.isArray(editingParameter.parameter_values) ? 
+                            editingParameter.parameter_values.on || '' : '') : 
+                            (typeof newParameter.parameter_values === 'object' ? newParameter.parameter_values.on || '' : '')}
                           onChange={(e) => {
                             if (editingParameter) {
                               setEditingParameter({
                                 ...editingParameter,
                                 values: {
-                                  ...(typeof editingParameter.values === 'object' && 
-                                    !Array.isArray(editingParameter.values) ? 
-                                    editingParameter.values : {}),
+                                  ...(typeof editingParameter.parameter_values === 'object' && 
+                                    !Array.isArray(editingParameter.parameter_values) ? 
+                                    editingParameter.parameter_values : {}),
                                   on: e.target.value
                                 }
                               });
@@ -627,7 +631,7 @@ function Parameters() {
                               setNewParameter({
                                 ...newParameter,
                                 values: {
-                                  ...(newParameter.values || {}),
+                                  ...(newParameter.parameter_values || {}),
                                   on: e.target.value
                                 }
                               });
@@ -641,17 +645,17 @@ function Parameters() {
                           id="toggleOff"
                           placeholder="No"
                           value={editingParameter ? 
-                            (typeof editingParameter.values === 'object' && !Array.isArray(editingParameter.values) ? 
-                            editingParameter.values.off || '' : '') : 
-                            (typeof newParameter.values === 'object' ? newParameter.values.off || '' : '')}
+                            (typeof editingParameter.parameter_values === 'object' && !Array.isArray(editingParameter.parameter_values) ? 
+                            editingParameter.parameter_values.off || '' : '') : 
+                            (typeof newParameter.parameter_values === 'object' ? newParameter.parameter_values.off || '' : '')}
                           onChange={(e) => {
                             if (editingParameter) {
                               setEditingParameter({
                                 ...editingParameter,
                                 values: {
-                                  ...(typeof editingParameter.values === 'object' && 
-                                    !Array.isArray(editingParameter.values) ? 
-                                    editingParameter.values : {}),
+                                  ...(typeof editingParameter.parameter_values === 'object' && 
+                                    !Array.isArray(editingParameter.parameter_values) ? 
+                                    editingParameter.parameter_values : {}),
                                   off: e.target.value
                                 }
                               });
@@ -659,7 +663,7 @@ function Parameters() {
                               setNewParameter({
                                 ...newParameter,
                                 values: {
-                                  ...(newParameter.values || {}),
+                                  ...(newParameter.parameter_values || {}),
                                   off: e.target.value
                                 }
                               });

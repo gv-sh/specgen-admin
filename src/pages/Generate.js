@@ -53,12 +53,12 @@ function Generate() {
           if (param.type === 'Toggle Switch') {
             initialValues[param.id] = false;
           } else if (param.type === 'Slider') {
-            initialValues[param.id] = param.config?.min || 0;
+            initialValues[param.id] = param.parameter_config?.min || 0;
           } else if (param.type === 'Checkbox') {
             initialValues[param.id] = [];
           } else {
-            initialValues[param.id] = param.values && param.values.length > 0 ? 
-              (param.values[0].id || param.values[0].label) : '';
+            initialValues[param.id] = param.parameter_values && param.parameter_values.length > 0 ? 
+              (param.parameter_values[0].id || param.parameter_values[0].label) : '';
           }
         });
 
@@ -115,21 +115,23 @@ function Generate() {
         // Prepare the content object to save
         const contentToSave = {
           title: title || response.data.title || 'Generated Content',
-          type: contentType,
-          parameterValues: {
+          prompt_data: {
             [selectedCategory]: parameterValues
-          },
-          createdAt: new Date().toISOString()
+          }
         };
-        
+
+        if (year) {
+          contentToSave.year = parseInt(year, 10);
+        }
+
         if (contentType === 'fiction' || contentType === 'combined') {
-          contentToSave.content = response.data.content;
+          contentToSave.fiction_content = response.data.fiction_content || response.data.content;
         }
-        
+
         if (contentType === 'image' || contentType === 'combined') {
-          contentToSave.imageData = response.data.imageData;
+          contentToSave.image_blob = response.data.image_blob || response.data.imageData;
         }
-        
+
         if (response.data.metadata) {
           contentToSave.metadata = response.data.metadata;
         }
@@ -169,7 +171,7 @@ function Generate() {
             onChange={(e) => handleParameterChange(param.id, e.target.value)}
             className="w-full"
           >
-            {param.values && param.values.map((value, index) => (
+            {param.parameter_values && param.parameter_values.map((value, index) => (
               <option key={value.id || index} value={value.id || value.label}>
                 {value.label}
               </option>
@@ -183,17 +185,17 @@ function Generate() {
             <Input
               id={`param-${param.id}`}
               type="range"
-              min={param.config?.min || 0}
-              max={param.config?.max || 100}
-              step={param.config?.step || 1}
-              value={parameterValues[param.id] || param.config?.min || 0}
+              min={param.parameter_config?.min || 0}
+              max={param.parameter_config?.max || 100}
+              step={param.parameter_config?.step || 1}
+              value={parameterValues[param.id] || param.parameter_config?.min || 0}
               onChange={(e) => handleParameterChange(param.id, parseInt(e.target.value, 10))}
               className="w-full"
             />
             <div className="flex justify-between text-xs text-muted-foreground">
-              <span>{param.config?.min || 0}</span>
-              <span>{parameterValues[param.id] || param.config?.min || 0}</span>
-              <span>{param.config?.max || 100}</span>
+              <span>{param.parameter_config?.min || 0}</span>
+              <span>{parameterValues[param.id] || param.parameter_config?.min || 0}</span>
+              <span>{param.parameter_config?.max || 100}</span>
             </div>
           </div>
         );
@@ -210,8 +212,8 @@ function Generate() {
             />
             <span className="text-sm">
               {parameterValues[param.id] ? 
-                (param.values && param.values.on ? param.values.on : 'Yes') : 
-                (param.values && param.values.off ? param.values.off : 'No')}
+                (param.parameter_values && param.parameter_values.on ? param.parameter_values.on : 'Yes') : 
+                (param.parameter_values && param.parameter_values.off ? param.parameter_values.off : 'No')}
             </span>
           </div>
         );
@@ -219,7 +221,7 @@ function Generate() {
       case 'Radio Buttons':
         return (
           <div className="space-y-2">
-            {param.values && param.values.map((value, index) => (
+            {param.parameter_values && param.parameter_values.map((value, index) => (
               <div key={value.id || index} className="flex items-center space-x-2">
                 <input
                   id={`param-${param.id}-${value.id || index}`}
@@ -241,7 +243,7 @@ function Generate() {
       case 'Checkbox':
         return (
           <div className="space-y-2">
-            {param.values && param.values.map((value, index) => (
+            {param.parameter_values && param.parameter_values.map((value, index) => (
               <div key={value.id || index} className="flex items-center space-x-2">
                 <input
                   id={`param-${param.id}-${value.id || index}`}
